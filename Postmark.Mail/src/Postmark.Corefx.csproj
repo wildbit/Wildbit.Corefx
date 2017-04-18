@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A1CEEB68-ECD5-4FD5-B35E-11D53ACED133}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Postmark.Corefx</RootNamespace>
+    <AssemblyName>Postmark.Corefx</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Postmark\Corefx\ContextAwareResult.cs" />
+    <Compile Include="Postmark\Corefx\ContextAwareResult.Windows.cs" />
+    <Compile Include="Postmark\Corefx\LazyAsyncResult.cs" />
+    <Compile Include="Postmark\Corefx\MailAddressParser.cs" />
+    <Compile Include="Postmark\Corefx\Mail\DotAtomReader.cs" />
+    <Compile Include="Postmark\Corefx\Mail\QuotedPairReader.cs" />
+    <Compile Include="Postmark\Corefx\Mail\QuotedStringFormatReader.cs" />
+    <Compile Include="Postmark\Corefx\NetEventSource.Common.cs" />
+    <Compile Include="Postmark\Corefx\Mime\MailBnfHelper.cs" />
+    <Compile Include="Postmark\Corefx\Mail\WhitespaceReader.cs" />
+    <Compile Include="Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Postmark\Corefx\Base64Stream.cs" />
+    <Compile Include="Postmark\Corefx\BufferBuilder.cs" />
+    <Compile Include="Postmark\Corefx\BufferedReadStream.cs" />
+    <Compile Include="Postmark\Corefx\CloseableStream.cs" />
+    <Compile Include="Postmark\Corefx\DelegatedStream.cs" />
+    <Compile Include="Postmark\Corefx\Mail\AlternateView.cs" />
+    <Compile Include="Postmark\Corefx\Mail\AlternateViewCollection.cs" />
+    <Compile Include="Postmark\Corefx\Mail\Attachment.cs" />
+    <Compile Include="Postmark\Corefx\Mail\AttachmentCollection.cs" />
+    <Compile Include="Postmark\Corefx\Mail\ISmtpAuthenticationModule.cs" />
+    <Compile Include="Postmark\Corefx\Mail\LinkedResource.cs" />
+    <Compile Include="Postmark\Corefx\Mail\LinkedResourceCollection.cs" />
+    <Compile Include="Postmark\Corefx\Mail\MailAddress.cs" />
+    <Compile Include="Postmark\Corefx\Mail\MailAddressCollection.cs" />
+    <Compile Include="Postmark\Corefx\Mail\MailHeaderID.cs" />
+    <Compile Include="Postmark\Corefx\Mail\MailHeaderInfo.cs" />
+    <Compile Include="Postmark\Corefx\Mail\MailMessage.cs" />
+    <Compile Include="Postmark\Corefx\Mail\MailPriority.cs" />
+    <Compile Include="Postmark\Corefx\Mail\MailWriter.cs" />
+    <Compile Include="Postmark\Corefx\Mail\NetEventSource.Mail.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpAuthenticationManager.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpClient.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpCommands.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpConnection.Auth.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpConnection.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpException.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpFailedRecipientException.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpFailedRecipientsException.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpLoginAuthenticationModule.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpNegotiateAuthenticationModule.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpNtlmAuthenticationModule.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpReplyReader.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpReplyReaderFactory.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpStatusCode.cs" />
+    <Compile Include="Postmark\Corefx\Mail\SmtpTransport.cs" />
+    <Compile Include="Postmark\Corefx\Mime\Base64WriteStateInfo.cs" />
+    <Compile Include="Postmark\Corefx\Mime\BaseWriter.cs" />
+    <Compile Include="Postmark\Corefx\Mime\ContentDisposition.cs" />
+    <Compile Include="Postmark\Corefx\Mime\ContentType.cs" />
+    <Compile Include="Postmark\Corefx\Mime\DispositionTypeNames.cs" />
+    <Compile Include="Postmark\Corefx\Mime\EightBitStream.cs" />
+    <Compile Include="Postmark\Corefx\Mime\EncodedStreamFactory.cs" />
+    <Compile Include="Postmark\Corefx\Mime\HeaderCollection.cs" />
+    <Compile Include="Postmark\Corefx\Mime\IEncodableStream.cs" />
+    <Compile Include="Postmark\Corefx\Mime\MediaTypeNames.cs" />
+    <Compile Include="Postmark\Corefx\Mime\MimeBasePart.cs" />
+    <Compile Include="Postmark\Corefx\Mime\MimeMultiPart.cs" />
+    <Compile Include="Postmark\Corefx\Mime\MimeMultiPartType.cs" />
+    <Compile Include="Postmark\Corefx\Mime\MimePart.cs" />
+    <Compile Include="Postmark\Corefx\Mime\MimeWriter.cs" />
+    <Compile Include="Postmark\Corefx\Mime\MultiAsyncResult.cs" />
+    <Compile Include="Postmark\Corefx\Mime\QEncodedStream.cs" />
+    <Compile Include="Postmark\Corefx\Mime\QuotedPrintableStream.cs" />
+    <Compile Include="Postmark\Corefx\Mime\SmtpDateTime.cs" />
+    <Compile Include="Postmark\Corefx\Mime\TransferEncoding.cs" />
+    <Compile Include="Postmark\Corefx\Mime\WriteStateInfoBase.cs" />
+    <Compile Include="Postmark\Corefx\TrackingStringDictionary.cs" />
+    <Compile Include="Postmark\Corefx\TrackingValidationObjectDictionary.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
