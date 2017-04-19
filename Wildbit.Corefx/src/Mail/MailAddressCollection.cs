@@ -6,10 +6,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System.Text;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     public class MailAddressCollection : Collection<MailAddress>
     {

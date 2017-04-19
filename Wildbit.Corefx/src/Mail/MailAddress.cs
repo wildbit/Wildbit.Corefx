@@ -4,11 +4,11 @@
 
 using System.Diagnostics;
 using System.Globalization;
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System.Text;
 using System;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     //
     // This class stores the basic components of an e-mail address as described in RFC 2822 Section 3.4.

@@ -5,11 +5,11 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
-using Postmark.Corefx.Mail;
+using Wildbit.Corefx.Mail;
 using System.Text;
 using System;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     public class ContentDisposition
     {

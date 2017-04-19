@@ -2,11 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System;
 using System.Diagnostics;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     //
     // RFC 2822 Section 3.2.4 - Atom, Dot-Atom

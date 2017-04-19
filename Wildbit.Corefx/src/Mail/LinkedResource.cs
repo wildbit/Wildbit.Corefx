@@ -4,10 +4,10 @@
 
 using System;
 using System.IO;
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System.Text;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     public class LinkedResource : AttachmentBase
     {

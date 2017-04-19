@@ -3,11 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Specialized;
-using Postmark.Corefx.Mail;
+using Wildbit.Corefx.Mail;
 using System.Text;
 using System;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     // Typed Content-Type header
     //

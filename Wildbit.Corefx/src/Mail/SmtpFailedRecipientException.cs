@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     [Serializable]
     public class SmtpFailedRecipientException : SmtpException, ISerializable

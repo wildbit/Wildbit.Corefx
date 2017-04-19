@@ -2,10 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.IO;
 using System.Threading;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     /// <summary>Provides a stream that notifies an event when the Close method is called.</summary>
     internal class ClosableStream : DelegatedStream

@@ -4,11 +4,11 @@
 
 using System.Diagnostics;
 using System.IO;
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System.Text;
 using System;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     internal sealed class Base64Stream : DelegatedStream, IEncodableStream
     {

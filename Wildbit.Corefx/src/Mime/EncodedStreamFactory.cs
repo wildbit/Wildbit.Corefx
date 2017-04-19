@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     internal class EncodedStreamFactory
     {

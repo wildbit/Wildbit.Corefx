@@ -7,7 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     internal class BufferedReadStream : DelegatedStream
     {

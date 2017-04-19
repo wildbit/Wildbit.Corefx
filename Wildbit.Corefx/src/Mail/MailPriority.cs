@@ -2,12 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System;
 using System.Runtime.ExceptionServices;
 using System.Text;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     public enum MailPriority
     {
@@ -376,7 +376,7 @@ namespace Postmark.Corefx.Mail
                 castedAsyncResult.EndCalled = true;
                 if (castedAsyncResult.Result is Exception e)
                 {
-                    ExceptionDispatchInfo.Throw(e);
+                    ExceptionDispatchInfoThrower.Throw(e);
                 }
             }
         }

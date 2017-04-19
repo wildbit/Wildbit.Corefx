@@ -5,7 +5,7 @@
 using System;
 using System.Threading;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     // This is used by ContextAwareResult to cache callback closures between similar calls.  Create one of these and
     // pass it in to FinishPostingAsyncOp() to prevent the context from being captured in every iteration of a looped async call.

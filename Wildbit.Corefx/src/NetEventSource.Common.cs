@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 #endif
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     // Implementation:
     // This partial file is meant to be consumed into each System.Net.* assembly that needs to log.  Each such assembly also provides

@@ -4,10 +4,10 @@
 
 using System;
 using System.Collections.Specialized;
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System.Text;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     [Flags]
     public enum DeliveryNotificationOptions

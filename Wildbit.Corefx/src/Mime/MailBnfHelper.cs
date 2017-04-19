@@ -6,7 +6,7 @@ using System;
 using System.Text;
 using System.Diagnostics;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     internal static class MailBnfHelper
     {

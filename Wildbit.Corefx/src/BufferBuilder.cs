@@ -5,7 +5,7 @@
 using System;
 using System.Text;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     internal sealed class BufferBuilder
     {

@@ -5,7 +5,7 @@
 using System;
 using System.Security.Principal;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     partial class ContextAwareResult
     {

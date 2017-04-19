@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     internal enum SupportedAuth
     {
@@ -19,7 +19,7 @@ namespace Postmark.Corefx.Mail
         private bool _serverSupportsEai;
         private bool _dsnEnabled;
         private bool _serverSupportsStartTls;
-        private bool _sawNegotiate;
+        //private bool _sawNegotiate;
         private SupportedAuth _supportedAuth = SupportedAuth.None;
         private readonly ISmtpAuthenticationModule[] _authenticationModules;
 

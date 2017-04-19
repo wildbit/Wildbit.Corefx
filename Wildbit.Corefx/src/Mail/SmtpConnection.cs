@@ -3,20 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Net.Security;
 using System.Net.Sockets;
 using System.Runtime.ExceptionServices;
-using System.Security.Authentication;
 using System.Security.Authentication.ExtendedProtection;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
 using System.Threading;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     internal partial class SmtpConnection
     {
@@ -454,7 +449,7 @@ namespace Postmark.Corefx.Mail
                 object connectResult = thisPtr.InternalWaitForCompletion();
                 if (connectResult is Exception e)
                 {
-                    ExceptionDispatchInfo.Throw(e);
+                    ExceptionDispatchInfoThrower.Throw(e);
                 }
             }
 

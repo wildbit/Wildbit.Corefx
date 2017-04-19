@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     // LazyAsyncResult - Base class for all IAsyncResult classes that want to take advantage of
     // lazily-allocated event handles.

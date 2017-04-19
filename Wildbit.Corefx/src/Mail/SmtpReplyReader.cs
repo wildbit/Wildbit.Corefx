@@ -5,7 +5,7 @@
 using System;
 using System.IO;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     //streams are read only; return of 0 means end of server's reply
     internal class SmtpReplyReader

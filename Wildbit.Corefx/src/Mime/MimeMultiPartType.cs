@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     internal enum MimeMultiPartType
     {

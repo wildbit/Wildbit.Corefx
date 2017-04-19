@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     internal static class MailHeaderInfo
     {

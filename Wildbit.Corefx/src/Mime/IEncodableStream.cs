@@ -4,7 +4,7 @@
 
 using System.IO;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     internal interface IEncodableStream
     {

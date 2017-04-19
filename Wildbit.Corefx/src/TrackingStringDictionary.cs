@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Specialized;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     internal sealed class TrackingStringDictionary : StringDictionary
     {

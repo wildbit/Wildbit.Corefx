@@ -7,10 +7,10 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Globalization;
-using Postmark.Corefx.Mail;
+using Wildbit.Corefx.Mail;
 using System.Runtime.ExceptionServices;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     /// <summary>
     /// Summary description for MimePart.
@@ -162,7 +162,7 @@ namespace Postmark.Corefx.Mime
             MimePartContext context = (MimePartContext)result.AsyncState;
             if (context._completed)
             {
-                ExceptionDispatchInfo.Throw(e);
+                ExceptionDispatchInfoThrower.Throw(e);
             }
 
             try

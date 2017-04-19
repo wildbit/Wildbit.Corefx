@@ -6,7 +6,7 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     // TrackingValidationObjectDictionary uses an internal collection of objects to store
     // only those objects which are not strings.  It still places a copy of the string

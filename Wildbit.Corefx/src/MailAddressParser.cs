@@ -4,12 +4,12 @@
 
 using System.Diagnostics;
 using System.Collections.Generic;
-using Postmark.Corefx.Mail;
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mail;
+using Wildbit.Corefx.Mime;
 using System;
 using System.Text;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     //
     // This class is responsible for parsing E-mail addresses as described in RFC 2822.

@@ -4,13 +4,13 @@
 
 using System.Collections.Generic;
 using System.IO;
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System.Runtime.ExceptionServices;
 using System.Security.Cryptography.X509Certificates;
 using System;
 using System.Net;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     internal class SmtpTransport
     {
@@ -325,7 +325,7 @@ namespace Postmark.Corefx.Mail
                 && (!(sendMailResult is SmtpFailedRecipientException)
                     || ((SmtpFailedRecipientException)sendMailResult).fatal))
             {
-                ExceptionDispatchInfo.Throw(e);
+                ExceptionDispatchInfoThrower.Throw(e);
             }
 
             return new MailWriter(thisPtr._stream);

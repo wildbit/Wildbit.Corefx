@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Specialized;
 using System.IO;
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     internal class MailWriter : BaseWriter
     {
@@ -53,7 +53,7 @@ namespace Postmark.Corefx.Mail
         /// <param name="args">Event args (not used)</param>
         protected override void OnClose(object sender, EventArgs args)
         {
-            Diagnostics.Debug.Assert(_contentStream == sender);
+            System.Diagnostics.Debug.Assert(_contentStream == sender);
             _contentStream.Flush();
             _contentStream = null;
         }

@@ -3,11 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System.Runtime.ExceptionServices;
 using System.Text;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     internal static class CheckCommand
     {
@@ -46,7 +46,7 @@ namespace Postmark.Corefx.Mail
             object commandResult = MultiAsyncResult.End(result);
             if (commandResult is Exception e)
             {
-                ExceptionDispatchInfo.Throw(e);
+                ExceptionDispatchInfoThrower.Throw(e);
             }
 
             LineInfo info = (LineInfo)commandResult;
@@ -137,7 +137,7 @@ namespace Postmark.Corefx.Mail
             object commandResult = MultiAsyncResult.End(result);
             if (commandResult is Exception e)
             {
-                ExceptionDispatchInfo.Throw(e);
+                ExceptionDispatchInfoThrower.Throw(e);
             }
             return (LineInfo[])commandResult;
         }

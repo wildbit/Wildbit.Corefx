@@ -10,7 +10,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     internal class MimeMultiPart : MimeBasePart
     {
@@ -64,7 +64,7 @@ namespace Postmark.Corefx.Mime
 
             if (context._completed)
             {
-                ExceptionDispatchInfo.Throw(e);
+                ExceptionDispatchInfoThrower.Throw(e);
             }
 
             try

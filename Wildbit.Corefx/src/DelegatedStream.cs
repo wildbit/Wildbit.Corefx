@@ -8,7 +8,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Postmark.Corefx
+namespace Wildbit.Corefx
 {
     internal class DelegatedStream : Stream
     {

@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using System.Diagnostics;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     /// <summary>
     /// This stream performs in-place decoding of quoted-printable

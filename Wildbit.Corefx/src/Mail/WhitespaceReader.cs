@@ -2,11 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System;
 using System.Diagnostics;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     // FWS, CFWS, and Comments are defined in RFC 2822 section 3.2.3.
     //
@@ -69,7 +69,7 @@ namespace Postmark.Corefx.Mail
             if (expectCR)
             {
                 // We found a LF without an immediately preceding CR, invalid.
-                throw new FormatException(SR.MailAddressInvalidFormat);
+                throw new FormatException(Strings.MailAddressInvalidFormat);
             }
             return index;
         }
@@ -125,7 +125,7 @@ namespace Postmark.Corefx.Mail
                     if (commentDepth < 0)
                     {
                         // Mismatched '('
-                        throw new FormatException(SR.Format(SR.MailHeaderFieldInvalidCharacter,
+                        throw new FormatException(string.Format(Strings.MailHeaderFieldInvalidCharacter,
                             MailBnfHelper.StartComment));
                     }
                     index--;
@@ -139,7 +139,7 @@ namespace Postmark.Corefx.Mail
                 // If we're still in a comment, this must be an invalid char
                 else if (commentDepth > 0)
                 {
-                    throw new FormatException(SR.Format(SR.MailHeaderFieldInvalidCharacter, data[index]));
+                    throw new FormatException(string.Format(Strings.MailHeaderFieldInvalidCharacter, data[index]));
                 }
                 // We must no longer be in a comment, and this is not a whitespace char, return
                 else
@@ -154,7 +154,7 @@ namespace Postmark.Corefx.Mail
             if (commentDepth > 0)
             {
                 // Mismatched ')', throw
-                throw new FormatException(SR.Format(SR.MailHeaderFieldInvalidCharacter, MailBnfHelper.EndComment));
+                throw new FormatException(string.Format(Strings.MailHeaderFieldInvalidCharacter, MailBnfHelper.EndComment));
             }
 
             return index;

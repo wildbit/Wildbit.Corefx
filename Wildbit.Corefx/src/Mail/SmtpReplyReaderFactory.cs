@@ -8,7 +8,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     //Streams created are read only and return 0 once a full server reply has been read
     //To get the next server reply, call GetNextReplyReader

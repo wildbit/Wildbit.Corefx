@@ -5,7 +5,7 @@
 using System;
 using System.IO;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     /// <summary>
     /// This stream does not encode content, but merely allows the user to declare

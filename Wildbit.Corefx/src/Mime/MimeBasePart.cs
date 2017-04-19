@@ -2,11 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Specialized;
 using System.Text;
-using Postmark.Corefx.Mail;
+using Wildbit.Corefx.Mail;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     internal class MimeBasePart
     {

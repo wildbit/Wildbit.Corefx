@@ -3,12 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.IO;
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System.Text;
 using System;
-using System;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     public abstract class AttachmentBase : IDisposable
     {

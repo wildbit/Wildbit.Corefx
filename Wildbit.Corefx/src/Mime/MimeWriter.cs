@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Specialized;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     /// <summary>
     /// Provides an abstraction for writing a MIME multi-part

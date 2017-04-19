@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Security.Authentication.ExtendedProtection;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     internal sealed class SmtpLoginAuthenticationModule : ISmtpAuthenticationModule
     {

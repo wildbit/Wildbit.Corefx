@@ -5,7 +5,7 @@
 using System;
 using System.Collections.ObjectModel;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     public sealed class LinkedResourceCollection : Collection<LinkedResource>, IDisposable
     {

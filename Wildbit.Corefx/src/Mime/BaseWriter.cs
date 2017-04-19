@@ -7,7 +7,7 @@ using System.Collections.Specialized;
 using System.Runtime.ExceptionServices;
 using System;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     internal abstract class BaseWriter
     {
@@ -149,7 +149,7 @@ namespace Postmark.Corefx.Mime
             object o = MultiAsyncResult.End(result);
             if (o is Exception e)
             {
-                ExceptionDispatchInfo.Throw(e);
+                ExceptionDispatchInfoThrower.Throw(e);
             }
             return (Stream)o;
         }

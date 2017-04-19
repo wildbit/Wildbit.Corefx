@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     // Enumeration of the well-known headers.
     // If you add to this enum you MUST also add the appropriate initializer in MailHeaderInfo.s_headerInfo

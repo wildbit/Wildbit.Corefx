@@ -2,11 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Postmark.Corefx.Mime;
+using Wildbit.Corefx.Mime;
 using System;
 using System.Diagnostics;
 
-namespace Postmark.Corefx.Mail
+namespace Wildbit.Corefx.Mail
 {
     // RFC 2822 Section 3.2.5 - Quoted strings
     // When a string of characters does not conform to an atom string (Section 3.2.4), it must be enclosed in double
@@ -79,7 +79,7 @@ namespace Postmark.Corefx.Mail
             while (index >= 0);
 
             // We started with a quote, but did not end with one
-            throw new FormatException(SR.Format(SR.MailHeaderFieldInvalidCharacter, MailBnfHelper.Quote));
+            throw new FormatException(string.Format(Strings.MailHeaderFieldInvalidCharacter, MailBnfHelper.Quote));
         }
 
         //
@@ -124,7 +124,7 @@ namespace Postmark.Corefx.Mail
                 // Check invalid characters
                 else if (!IsValidQtext(permitUnicode, data[index]))
                 {
-                    throw new FormatException(SR.Format(SR.MailHeaderFieldInvalidCharacter, data[index]));
+                    throw new FormatException(string.Format(Strings.MailHeaderFieldInvalidCharacter, data[index]));
                 }
                 // Valid char
                 else

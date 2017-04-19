@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System;
 
-namespace Postmark.Corefx.Mime
+namespace Wildbit.Corefx.Mime
 {
     #region RFC2822 date time string format description
     // Format of Date Time string as described by RFC 2822 section 4.3 which obsoletes

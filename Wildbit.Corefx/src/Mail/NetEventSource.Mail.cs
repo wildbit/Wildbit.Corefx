@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.Tracing;
-using Postmark.Corefx.Mail;
+using Wildbit.Corefx.Mail;
 using System.Runtime.CompilerServices;
 
 namespace System.Net
