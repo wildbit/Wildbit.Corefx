@@ -3,9 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Security;
@@ -429,7 +431,13 @@ namespace Wildbit.Corefx.Mail
             Send(mailMessage);
         }
 
-        public void Send(MailMessage message)
+        /// <summary>
+        /// Send a message via SMTP, optionally, bypass the RCPT TO recipients with the added rcpto collection.
+        /// Otherwise, default behavior is to send to all recipients listed in To, Cc, and Bcc.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="rcptToRecipients"></param>
+        public void Send(MailMessage message, IEnumerable<MailAddress> rcptToRecipients = null)
         {
             if (NetEventSource.IsEnabled) NetEventSource.Enter(this, message);
 
@@ -467,25 +475,38 @@ namespace Wildbit.Corefx.Mail
                     throw new InvalidOperationException(Strings.SmtpFromRequired);
                 }
 
-                if (message.To != null)
+                var rcptTo = (rcptToRecipients ?? Enumerable.Empty<MailAddress>()).ToArray();
+
+                if (rcptTo.Length > 0)
                 {
-                    foreach (MailAddress address in message.To)
+                    foreach(var i in rcptTo)
                     {
-                        recipients.Add(address);
+                        recipients.Add(i);
                     }
                 }
-                if (message.Bcc != null)
+                else
                 {
-                    foreach (MailAddress address in message.Bcc)
+
+                    if (message.To != null)
                     {
-                        recipients.Add(address);
+                        foreach (MailAddress address in message.To)
+                        {
+                            recipients.Add(address);
+                        }
                     }
-                }
-                if (message.CC != null)
-                {
-                    foreach (MailAddress address in message.CC)
+                    if (message.Bcc != null)
                     {
-                        recipients.Add(address);
+                        foreach (MailAddress address in message.Bcc)
+                        {
+                            recipients.Add(address);
+                        }
+                    }
+                    if (message.CC != null)
+                    {
+                        foreach (MailAddress address in message.CC)
+                        {
+                            recipients.Add(address);
+                        }
                     }
                 }
 
