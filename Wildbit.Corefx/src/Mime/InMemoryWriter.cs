@@ -34,6 +34,10 @@ namespace Wildbit.Corefx.Mime
                 encodedHeaders += $"{a}: { headers[a] }\r\n";
             }
 
+            if (!allowUnicode && !MimeBasePart.IsAscii(encodedHeaders, true))
+            {
+                throw new FormatException("The message's headers contain unicode characters, but unicode is not permitted for these headers.");
+            }
             var headerBytes = encoding.GetBytes(encodedHeaders);
             _stream.Write(headerBytes, 0, headerBytes.Length);
         }
