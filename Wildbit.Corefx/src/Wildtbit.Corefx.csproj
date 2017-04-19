@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ContextAwareResult.cs" />
     <Compile Include="ContextAwareResult.Windows.cs" />
     <Compile Include="DomainLiteralReader.cs" />
