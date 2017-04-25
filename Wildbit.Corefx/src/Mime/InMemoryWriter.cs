@@ -23,23 +23,17 @@ namespace Wildbit.Corefx.Mime
 
         internal override void WriteHeaders(NameValueCollection headers, bool allowUnicode)
         {
-            var encoding = allowUnicode ? Encoding.UTF8 : Encoding.ASCII;
-            //TODO: This should probably throw if a header includes a unicode character, but
-            // the 'allowUnicode' parameter is false.
-            // This implementation might be totally wrong.. 
-            // Perhaps need to use QP or EW, or Base64 to fix things up.
-            var encodedHeaders = "";
-            foreach (var a in headers.AllKeys)
-            {
-                encodedHeaders += $"{a}: { headers[a] }\r\n";
-            }
+            if (headers == null)
+                throw new ArgumentNullException(nameof(headers));
 
-            if (!allowUnicode && !MimeBasePart.IsAscii(encodedHeaders, true))
+            foreach (string key in headers)
             {
-                throw new FormatException("The message's headers contain unicode characters, but unicode is not permitted for these headers.");
+                string[] values = headers.GetValues(key);
+                foreach (string value in values)
+                {
+                    WriteHeader(key, value, allowUnicode);
+                }
             }
-            var headerBytes = encoding.GetBytes(encodedHeaders);
-            _stream.Write(headerBytes, 0, headerBytes.Length);
         }
     }
 }
