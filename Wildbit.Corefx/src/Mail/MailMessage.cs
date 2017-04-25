@@ -31,7 +31,8 @@ namespace Wildbit.Corefx.Mail
         public MailMessage()
         {
             _message = new Message();
-            if (NetEventSource.IsEnabled) NetEventSource.Associate(this, _message);
+            if (NetEventSource.IsEnabled)
+                NetEventSource.Associate(this, _message);
         }
 
         public MailMessage(string from, string to)
@@ -49,7 +50,8 @@ namespace Wildbit.Corefx.Mail
                 throw new ArgumentException(string.Format(Strings.net_emptystringcall, nameof(to)), nameof(to));
 
             _message = new Message(from, to);
-            if (NetEventSource.IsEnabled) NetEventSource.Associate(this, _message);
+            if (NetEventSource.IsEnabled)
+                NetEventSource.Associate(this, _message);
         }
 
 
@@ -279,6 +281,25 @@ namespace Wildbit.Corefx.Mail
             }
         }
 
+        /// <summary>
+        /// Indicate a preference for QEncoding when encoding non-ascii headers.
+        /// </summary>
+        /// <remarks>
+        /// The preference of the original System.Net.Mail library was to use base64, but we believe that
+        /// QEncoding (QP, instead of base64) is the way to go because some MUAs may percieve it as
+        /// "less spammy". This was a valid hueristic in 2012-ish, but may have changed.
+        /// </remarks>
+        public bool PreferQEncodeForHeaders
+        {
+            get
+            {
+                return _message.PreferQEncodeForHeaders;
+            }
+            set
+            {
+                _message.PreferQEncodeForHeaders = value;
+            }
+        }
 
         public AttachmentCollection Attachments
         {
@@ -443,7 +464,7 @@ namespace Wildbit.Corefx.Mail
                     }
                     part.Parts.Add(attachmentsPart);
                     _message.Content = part;
-                } 
+                }
                 // If there is no Attachement, AND only "1" Alternate View AND !!no body!!
                 // then in fact, this is NOT a multipart region.
                 else if (viewsPart.Parts.Count == 1 && string.IsNullOrEmpty(_body))
