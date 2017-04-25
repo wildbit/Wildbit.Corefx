@@ -535,7 +535,7 @@ namespace Wildbit.Corefx.Mail
                 {
                     Headers.InternalAdd(headerName,
                         MimeBasePart.EncodeHeaderValue(_subject, _subjectEncoding,
-                        MimeBasePart.ShouldUseBase64Encoding(_subjectEncoding),
+                        MimeBasePart.ShouldUseBase64Encoding(_subjectEncoding) && !PreferQEncodeForHeaders,
                         headerName.Length));
                 }
             }
@@ -546,7 +546,7 @@ namespace Wildbit.Corefx.Mail
 
             EncodeHeaders(_headers, allowUnicode);
         }
-
+        
         internal void EncodeHeaders(HeaderCollection headers, bool allowUnicode)
         {
             if (_headersEncoding == null)
@@ -584,7 +584,7 @@ namespace Wildbit.Corefx.Mail
                     {
                         encodedValue = MimeBasePart.EncodeHeaderValue(values[j],
                                                         _headersEncoding,
-                                                        MimeBasePart.ShouldUseBase64Encoding(_headersEncoding),
+                                                        MimeBasePart.ShouldUseBase64Encoding(_headersEncoding) && !PreferQEncodeForHeaders,
                                                         headerName.Length);
                     }
 
@@ -616,6 +616,16 @@ namespace Wildbit.Corefx.Mail
             }
             return false;
         }
+
+        /// <summary>
+        /// Indicate a preference for QEncoding when encoding non-ascii headers.
+        /// </summary>
+        /// <remarks>
+        /// The preference of the original System.Net.Mail library was to use base64, but we believe that
+        /// QEncoding (QP, instead of base64) is the way to go because some MUAs may percieve it as
+        /// "less spammy". This was a valid hueristic in 2012-ish, but may have changed.
+        /// </remarks>
+        public bool PreferQEncodeForHeaders { get; set; }
 
         #endregion Sending
     }
