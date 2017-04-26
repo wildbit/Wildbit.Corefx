@@ -20,7 +20,7 @@ namespace Wildbit.Corefx.Mime
         /// <returns></returns>
         public static MimeMultiPart CreateAlternativePart()
         {
-            return new MimeMultiPart(MimeMultiPartType.Related);
+            return new MimeMultiPart(MimeMultiPartType.Alternative);
         }
 
         /// <summary>
