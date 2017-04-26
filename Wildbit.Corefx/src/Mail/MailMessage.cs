@@ -219,6 +219,10 @@ namespace Wildbit.Corefx.Mail
             }
         }
 
+        /// <summary>
+        /// The raw body of the message.
+        /// Ignored when using Alternative Views, or MimeBody.
+        /// </summary>
         public string Body
         {
             get
@@ -268,7 +272,10 @@ namespace Wildbit.Corefx.Mail
             }
         }
 
-
+        /// <summary>
+        /// Indicates that the Body property is HTML (or Text).
+        /// Ignored when using Alternative Views, or MimeBody.
+        /// </summary>
         public bool IsBodyHtml
         {
             get
@@ -301,6 +308,9 @@ namespace Wildbit.Corefx.Mail
             }
         }
 
+        /// <summary>
+        /// Associated attachments. Ignored when using MimeBody
+        /// </summary>
         public AttachmentCollection Attachments
         {
             get
@@ -317,6 +327,10 @@ namespace Wildbit.Corefx.Mail
                 return _attachments;
             }
         }
+
+        /// <summary>
+        /// The multipart/related parts of the message. Ignored when using MimeBody.
+        /// </summary>
         public AlternateViewCollection AlternateViews
         {
             get
@@ -362,8 +376,8 @@ namespace Wildbit.Corefx.Mail
         }
 
         /// <summary>
-        /// A mime body can be set directly on this message. This will override all
-        /// other
+        /// The root mime part for the message. 
+        /// This will override all other body parts and alternative views.
         /// </summary>
         public MimeBasePart MimeBody { get; set; }
 
