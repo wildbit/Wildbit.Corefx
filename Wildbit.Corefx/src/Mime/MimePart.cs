@@ -4,11 +4,7 @@
 
 using System;
 using System.IO;
-using System.Text;
-using System.Collections;
-using System.Globalization;
 using Wildbit.Corefx.Mail;
-using System.Runtime.ExceptionServices;
 
 namespace Wildbit.Corefx.Mime
 {
@@ -104,7 +100,7 @@ namespace Wildbit.Corefx.Mime
                 }
             }
         }
-
+        
         internal void SetContent(Stream stream)
         {
             if (stream == null)

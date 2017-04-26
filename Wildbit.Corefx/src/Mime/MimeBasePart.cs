@@ -9,7 +9,7 @@ using Wildbit.Corefx.Mail;
 
 namespace Wildbit.Corefx.Mime
 {
-    internal class MimeBasePart
+    public class MimeBasePart : IMimePartProvider
     {
         internal const string DefaultCharSet = "utf-8";
         private static readonly char[] s_decodeEncodingSplitChars = new char[] { '?', '\r', '\n' };
@@ -229,6 +229,8 @@ namespace Wildbit.Corefx.Mime
                 _contentType.PersistIfNeeded((HeaderCollection)Headers, true);
             }
         }
+
+        public MimeBasePart Part => this;
 
         internal void PrepareHeaders(bool allowUnicode)
         {

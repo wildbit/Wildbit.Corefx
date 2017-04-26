@@ -53,6 +53,7 @@
     <Compile Include="LazyAsyncResult.cs" />
     <Compile Include="MailAddressParser.cs" />
     <Compile Include="Mail\DotAtomReader.cs" />
+    <Compile Include="Mail\IMimePartProvider.cs" />
     <Compile Include="Mail\MailMessageExtensions.cs" />
     <Compile Include="Mail\QuotedPairReader.cs" />
     <Compile Include="Mail\QuotedStringFormatReader.cs" />

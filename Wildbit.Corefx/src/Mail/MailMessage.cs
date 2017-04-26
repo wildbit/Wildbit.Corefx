@@ -361,6 +361,11 @@ namespace Wildbit.Corefx.Mail
             }
         }
 
+        /// <summary>
+        /// A mime body can be set directly on this message. This will override all
+        /// other
+        /// </summary>
+        public MimeBasePart MimeBody { get; set; }
 
         private void SetContent(bool allowUnicode)
         {
@@ -371,7 +376,11 @@ namespace Wildbit.Corefx.Mail
                 _bodyView = null;
             }
 
-            if (AlternateViews.Count == 0 && Attachments.Count == 0)
+            if(MimeBody != null)
+            {
+                _message.Content = MimeBody;
+            }
+            else if (AlternateViews.Count == 0 && Attachments.Count == 0)
             {
                 if (!string.IsNullOrEmpty(_body))
                 {

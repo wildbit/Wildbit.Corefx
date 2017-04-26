@@ -6,14 +6,41 @@ using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Runtime.ExceptionServices;
 using System.Threading;
 using System;
+using System.Linq;
 
 namespace Wildbit.Corefx.Mime
 {
-    internal class MimeMultiPart : MimeBasePart
+    public class MimeMultiPart : MimeBasePart
     {
+        /// <summary>
+        /// Create a `multipart/alternative` mime part.
+        /// </summary>
+        /// <returns></returns>
+        public static MimeMultiPart CreateAlternativePart()
+        {
+            return new MimeMultiPart(MimeMultiPartType.Related);
+        }
+
+        /// <summary>
+        /// Create a `multipart/related` mime part.
+        /// </summary>
+        /// <returns></returns>
+        public static MimeMultiPart CreateRelatedPart()
+        {
+            return new MimeMultiPart(MimeMultiPartType.Related);
+        }
+
+        /// <summary>
+        /// Create a `multipart/mixed` mime part.
+        /// </summary>
+        /// <returns></returns>
+        public static MimeMultiPart CreateMixedPart()
+        {
+            return new MimeMultiPart(MimeMultiPartType.Mixed);
+        }
+
         private Collection<MimeBasePart> _parts;
         private static int s_boundary;
         private AsyncCallback _mimePartSentCallback;
@@ -42,7 +69,19 @@ namespace Wildbit.Corefx.Mime
             ContentType.Boundary = GetNextBoundary();
         }
 
-        internal Collection<MimeBasePart> Parts
+        /// <summary>
+        /// Append more mime parts to this one.
+        /// </summary>
+        /// <param name="parts">The parts to append.</param>
+        public void Append(params MimeBasePart[] parts)
+        {
+            foreach (var p in parts ?? Enumerable.Empty<MimeBasePart>())
+            {
+                Parts.Add(p);
+            }
+        }
+
+        public Collection<MimeBasePart> Parts
         {
             get
             {

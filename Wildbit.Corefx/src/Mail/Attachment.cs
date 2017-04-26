@@ -9,7 +9,7 @@ using System;
 
 namespace Wildbit.Corefx.Mail
 {
-    public abstract class AttachmentBase : IDisposable
+    public abstract class AttachmentBase : IDisposable, IMimePartProvider
     {
         internal bool disposed = false;
         private MimePart _part = new MimePart();
@@ -328,6 +328,11 @@ namespace Wildbit.Corefx.Mail
                 return _part;
             }
         }
+
+        /// <summary>
+        /// Produce the raw mime-part that represents this attachment.
+        /// </summary>
+        public MimeBasePart Part { get { return MimePart;  } }
     }
 
     public class Attachment : AttachmentBase
