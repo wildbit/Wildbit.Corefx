@@ -28,7 +28,7 @@ namespace Wildbit.Corefx.UnitTests
             Encoding encoding =
                 encodingName == "ASCII" ? Encoding.ASCII :
                 encodingName == "UTF8" ? Encoding.UTF8 :
-                Encoding.Default;
+                Encoding.UTF8;
 
             var outputStream = new MemoryStream();
             var testStream = new QuotedPrintableStream(outputStream, encodeCRLF);
