@@ -4,9 +4,10 @@
 
 using System.IO;
 using System.Text;
+using Wildbit.Corefx.Mime;
 using Xunit;
 
-namespace System.Net.Mime.Tests
+namespace Wildbit.Corefx.UnitTests
 {
     public class EightBitStreamTest
     {

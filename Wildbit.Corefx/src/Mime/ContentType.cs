@@ -43,7 +43,7 @@ namespace Wildbit.Corefx.Mime
         /// <summary>
         /// ctor.
         /// </summary>
-        /// <param name="fieldValue">Unparsed value of the Content-Type header.</param>
+        /// <param name="contentType">Unparsed value of the Content-Type header.</param>
         public ContentType(string contentType)
         {
             if (contentType == null)

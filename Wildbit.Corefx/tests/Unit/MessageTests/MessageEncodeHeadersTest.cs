@@ -5,8 +5,11 @@
 using System.Text;
 using System.Net.Mime;
 using Xunit;
+using Wildbit.Corefx.Mime;
+using Wildbit.Corefx.Mail;
+using System;
 
-namespace System.Net.Mail.Tests
+namespace Wildbit.Corefx.UnitTests
 {
     public class MessageEncodeHeadersTest
     {

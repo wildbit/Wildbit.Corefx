@@ -4,7 +4,7 @@
 
 using Xunit;
 
-namespace System.Net.Mail.Tests
+namespace Wildbit.Corefx.UnitTests
 {
     public class NTAuthenticationStubTests
     {

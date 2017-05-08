@@ -3,9 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text;
+using Wildbit.Corefx.Mime;
 using Xunit;
 
-namespace System.Net.Mime.Tests
+namespace Wildbit.Corefx.UnitTests
 {
     public class Base64EncodingTest
     {
