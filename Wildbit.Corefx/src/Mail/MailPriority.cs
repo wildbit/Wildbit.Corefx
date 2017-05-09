@@ -436,6 +436,12 @@ namespace Wildbit.Corefx.Mail
             }
         }
 
+        /// <summary>
+        /// Should this message emit a Sender header? This is potentially useful for IIS to forward SMTP mail, but
+        /// confuses the issue when Return-Path is involved. You can disable the "Sender" header.
+        /// </summary>
+        internal bool EmitSenderHeader { get; set; } = true;
+
         internal void PrepareHeaders(bool sendEnvelope, bool allowUnicode)
         {
             string headerName;
@@ -453,7 +459,7 @@ namespace Wildbit.Corefx.Mail
             // add sender to headers first so that it is written first to allow the IIS smtp svc to
             // send MAIL FROM with the sender if both sender and from are present
             headerName = MailHeaderInfo.GetString(MailHeaderID.Sender);
-            if (Sender != null)
+            if (Sender != null && EmitSenderHeader)
             {
                 Headers.InternalAdd(headerName, Sender.Encode(headerName.Length, allowUnicode));
             }

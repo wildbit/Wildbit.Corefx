@@ -102,6 +102,22 @@ namespace Wildbit.Corefx.Mail
             }
         }
 
+        /// <summary>
+        /// Should this message emit a Sender header? This is potentially useful for IIS to forward SMTP mail, but
+        /// confuses the issue when Return-Path is involved. You can disable the "Sender" header by setting this to false.
+        /// </summary>
+        public bool EmitSenderHeader
+        {
+            get
+            {
+               return _message.EmitSenderHeader;
+            }
+            set
+            {
+                _message.EmitSenderHeader = value;
+            }
+        }
+
         [Obsolete("ReplyTo is obsoleted for this type.  Please use ReplyToList instead which can accept multiple addresses. http://go.microsoft.com/fwlink/?linkid=14202")]
         public MailAddress ReplyTo
         {
