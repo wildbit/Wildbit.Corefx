@@ -231,12 +231,18 @@ namespace Wildbit.Corefx
                     break;
             }
 
+            #region Write the majority of the bytes
+            /*
+             * To make this fast, do some bitshifting with three bytes at a time. This translates to four base64 bytes.
+             */
+
             int calcLength = cur + (count - (count % 3));
 
             // Convert three bytes at a time to base64 notation.  This will output 4 chars.
             for (; cur < calcLength; cur += 3)
             {
-                if ((_lineLength != -1) && (WriteState.CurrentLineLength + SizeOfBase64EncodedChar + _writeState.FooterLength > _lineLength))
+                var nextLength = WriteState.CurrentLineLength + SizeOfBase64EncodedChar + _writeState.FooterLength;
+                if (_lineLength != -1 && nextLength > _lineLength)
                 {
                     WriteState.AppendCRLF(shouldAppendSpaceToCRLF);
                 }
@@ -252,7 +258,8 @@ namespace Wildbit.Corefx
                 WriteState.Append(s_base64EncodeMap[(buffer[cur + 2] & 0x3f)]);
             }
 
-            cur = calcLength; //Where we left off before
+            cur = calcLength; //Where we left off before 
+            #endregion
 
             // See if we need to fold before writing the last section (with possible padding)
             if ((count % 3 != 0) && (_lineLength != -1) && (WriteState.CurrentLineLength + SizeOfBase64EncodedChar + _writeState.FooterLength >= _lineLength))
@@ -301,6 +308,10 @@ namespace Wildbit.Corefx
 
             // Write out the last footer, if any.  e.g. ?=
             WriteState.AppendFooter();
+
+            /*
+             * return the number of bytes we wrote, less the number we skipped to begin with.
+             */
             return cur - offset;
         }
 

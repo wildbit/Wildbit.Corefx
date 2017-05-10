@@ -45,6 +45,10 @@ namespace Wildbit.Corefx.Mime
             IEncodableStream stream = factory.GetEncoderForHeader(encoding, base64Encoding, headerLength);
 
             byte[] buffer = encoding.GetBytes(value);
+            
+            //TODO: split the "encode bytes" into multiple requests
+            //to make sure they are written in byte groups.
+
             stream.EncodeBytes(buffer, 0, buffer.Length);
             return stream.GetEncodedString();
         }
