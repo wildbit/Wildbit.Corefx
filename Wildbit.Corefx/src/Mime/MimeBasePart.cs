@@ -27,6 +27,13 @@ namespace Wildbit.Corefx.Mime
         internal static string EncodeHeaderValue(string value, Encoding encoding, bool base64Encoding) =>
             EncodeHeaderValue(value, encoding, base64Encoding, 0);
 
+        private static readonly int SURROGATE_START_VALUE = (byte.MaxValue << 6) & byte.MaxValue;
+        private static readonly int TWO_BYTE_CHAR_VALUE = SURROGATE_START_VALUE;
+        private static readonly int THREE_BYTE_CHAR_VALUE = (byte.MaxValue << 5) & byte.MaxValue;
+        private static readonly int FOUR_BYTE_CHAR_VALUE = (byte.MaxValue << 4) & byte.MaxValue;
+
+        private static int wrapperPrototypeLength = " =??X??=".Length;
+
         //used when the length of the header name itself is known (i.e. Subject : )
         internal static string EncodeHeaderValue(string value, Encoding encoding, bool base64Encoding, int headerLength)
         {
@@ -46,10 +53,57 @@ namespace Wildbit.Corefx.Mime
 
             byte[] buffer = encoding.GetBytes(value);
             
-            //TODO: split the "encode bytes" into multiple requests
-            //to make sure they are written in byte groups.
+            /*
+            if (base64Encoding && encoding == Encoding.UTF8)
+            {
+                var encodingName = encoding.HeaderName;
+                var wrapperLength = wrapperPrototypeLength + encodingName.Length;
 
-            stream.EncodeBytes(buffer, 0, buffer.Length);
+                var offset = 0;
+                var lineoverhead = wrapperLength + headerLength - 1;
+                while (offset < buffer.Length)
+                {
+                    var byteCount = 0;
+                    if (offset > 0)
+                    {
+                        lineoverhead = wrapperLength;
+                    }
+
+                    for (var i = offset; i < buffer.Length;)
+                    {
+                        var size = 1;
+                        if (buffer[i] <= 127)
+                        { size = 1; }
+                        else if (buffer[i] >= FOUR_BYTE_CHAR_VALUE)
+                        { size = 4; }
+                        else if (buffer[i] >= THREE_BYTE_CHAR_VALUE)
+                        { size = 3; }
+                        else if (buffer[i] >= TWO_BYTE_CHAR_VALUE)
+                        { size = 2; }
+
+                        //base64 chars produce 4/3s the bytes. Need to round up to allow for zero padding.
+                        var base64ByteCount = Math.Ceiling((byteCount + size) / 3f) * 4;
+                        
+                        if (lineoverhead + base64ByteCount <= EncodedStreamFactory.DefaultMaxLineLength)
+                        {
+                            byteCount += size;
+                            i += size;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    stream.EncodeBytes(buffer, offset, byteCount);
+                    offset += byteCount;
+                }
+            }
+            else
+            {
+            */
+                stream.EncodeBytes(buffer, 0, buffer.Length);
+            /*}*/
             return stream.GetEncodedString();
         }
 
