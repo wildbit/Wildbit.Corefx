@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Text;
+
 namespace Wildbit.Corefx.Mime
 {
     internal class WriteStateInfoBase
@@ -29,11 +31,11 @@ namespace Wildbit.Corefx.Mime
         }
 
         internal WriteStateInfoBase(int bufferSize, byte[] header, byte[] footer, int maxLineLength)
-            : this(bufferSize, header, footer, maxLineLength, 0)
+            : this(bufferSize, header, footer, maxLineLength, 0, null)
         {
         }
 
-        internal WriteStateInfoBase(int bufferSize, byte[] header, byte[] footer, int maxLineLength, int mimeHeaderLength)
+        internal WriteStateInfoBase(int bufferSize, byte[] header, byte[] footer, int maxLineLength, int mimeHeaderLength, Encoding textEncoding)
         {
             _buffer = new byte[bufferSize];
             _header = header;
@@ -42,7 +44,10 @@ namespace Wildbit.Corefx.Mime
             // Account for header name, if any.  e.g. "Subject: "
             _currentLineLength = mimeHeaderLength;
             _currentBufferUsed = 0;
+            BinaryTextEncoding = textEncoding;
         }
+
+        internal Encoding BinaryTextEncoding { get; set; }
 
         internal int FooterLength => _footer.Length;
         internal byte[] Footer => _footer;

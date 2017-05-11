@@ -200,6 +200,8 @@ namespace Wildbit.Corefx.Mime
             }
         }
 
+        public int EncodeHeaderBytes(byte[] buffer, Encoding textEncoding) { return EncodeBytes(buffer, 0, buffer.Length); }
+
         public int EncodeBytes(byte[] buffer, int offset, int count)
         {
             // Add Encoding header, if any. e.g. =?encoding?b?

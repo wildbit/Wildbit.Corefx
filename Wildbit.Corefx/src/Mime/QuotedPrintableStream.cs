@@ -217,10 +217,12 @@ namespace Wildbit.Corefx.Mime
                         }
                     }
                 }
-            EndWhile:
+EndWhile:
                 return (int)(dest - start);
             }
         }
+
+        public int EncodeHeaderBytes(byte[] bytes, Encoding textEncoding) { return EncodeBytes(bytes, 0, bytes.Length); }
 
         public int EncodeBytes(byte[] buffer, int offset, int count)
         {

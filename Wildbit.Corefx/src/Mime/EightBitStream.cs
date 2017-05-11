@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 
 namespace Wildbit.Corefx.Mime
 {
@@ -156,6 +157,8 @@ namespace Wildbit.Corefx.Mime
         public Stream GetStream() => this;
 
         public int DecodeBytes(byte[] buffer, int offset, int count) { throw new NotImplementedException(); }
+
+        public int EncodeHeaderBytes(byte[] buffer, Encoding textEncoding) { throw new NotImplementedException(); }
 
         public int EncodeBytes(byte[] buffer, int offset, int count) { throw new NotImplementedException(); }
 

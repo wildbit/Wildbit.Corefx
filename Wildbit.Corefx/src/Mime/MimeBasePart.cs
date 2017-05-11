@@ -52,58 +52,7 @@ namespace Wildbit.Corefx.Mime
             IEncodableStream stream = factory.GetEncoderForHeader(encoding, base64Encoding, headerLength);
 
             byte[] buffer = encoding.GetBytes(value);
-            
-            /*
-            if (base64Encoding && encoding == Encoding.UTF8)
-            {
-                var encodingName = encoding.HeaderName;
-                var wrapperLength = wrapperPrototypeLength + encodingName.Length;
-
-                var offset = 0;
-                var lineoverhead = wrapperLength + headerLength - 1;
-                while (offset < buffer.Length)
-                {
-                    var byteCount = 0;
-                    if (offset > 0)
-                    {
-                        lineoverhead = wrapperLength;
-                    }
-
-                    for (var i = offset; i < buffer.Length;)
-                    {
-                        var size = 1;
-                        if (buffer[i] <= 127)
-                        { size = 1; }
-                        else if (buffer[i] >= FOUR_BYTE_CHAR_VALUE)
-                        { size = 4; }
-                        else if (buffer[i] >= THREE_BYTE_CHAR_VALUE)
-                        { size = 3; }
-                        else if (buffer[i] >= TWO_BYTE_CHAR_VALUE)
-                        { size = 2; }
-
-                        //base64 chars produce 4/3s the bytes. Need to round up to allow for zero padding.
-                        var base64ByteCount = Math.Ceiling((byteCount + size) / 3f) * 4;
-                        
-                        if (lineoverhead + base64ByteCount <= EncodedStreamFactory.DefaultMaxLineLength)
-                        {
-                            byteCount += size;
-                            i += size;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-
-                    stream.EncodeBytes(buffer, offset, byteCount);
-                    offset += byteCount;
-                }
-            }
-            else
-            {
-            */
-                stream.EncodeBytes(buffer, 0, buffer.Length);
-            /*}*/
+            stream.EncodeHeaderBytes(buffer, encoding);
             return stream.GetEncodedString();
         }
 

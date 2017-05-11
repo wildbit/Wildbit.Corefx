@@ -193,8 +193,98 @@ namespace Wildbit.Corefx
             }
         }
 
-        public int EncodeBytes(byte[] buffer, int offset, int count) =>
-            EncodeBytes(buffer, offset, count, true, true);
+        public int EncodeHeaderBytesWIP(byte[] buffer, Encoding textEncoding)
+        {
+            Debug.Assert(buffer != null, "buffer was null");
+            Debug.Assert(_writeState != null, "writestate was null");
+            Debug.Assert(_writeState.Buffer != null, "writestate.buffer was null");
+            
+            // Add Encoding header, if any. e.g. =?encoding?b?
+            WriteState.AppendHeader();
+            
+            var totalBytes = buffer.Length;
+            var cursor = 0;
+
+            #region Write the majority of the bytes
+            /*
+             * To make this fast, do some bitshifting with three bytes at a time. This translates to four base64 bytes.
+             */
+
+            var calcLength = cursor + (totalBytes - (totalBytes % 3));
+
+            // Convert three bytes at a time to base64 notation.  This will output 4 chars.
+            for (; cursor < calcLength; cursor += 3)
+            {
+                var nextLength = WriteState.CurrentLineLength + SizeOfBase64EncodedChar + _writeState.FooterLength;
+                if (_lineLength != -1 && nextLength > _lineLength)
+                {
+                    WriteState.AppendCRLF(true);
+                }
+
+                //how we actually encode: get three bytes in the
+                //buffer to be encoded.  Then, extract six bits at a time and encode each six bit chunk as a base-64 character.
+                //this means that three bytes of data will be encoded as four base64 characters.  It also means that to encode
+                //a character, we must have three bytes to encode so if the number of bytes is not divisible by three, we 
+                //must pad the buffer (this happens below)
+                WriteState.Append(s_base64EncodeMap[(buffer[cursor] & 0xfc) >> 2]);
+                WriteState.Append(s_base64EncodeMap[((buffer[cursor] & 0x03) << 4) | ((buffer[cursor + 1] & 0xf0) >> 4)]);
+                WriteState.Append(s_base64EncodeMap[((buffer[cursor + 1] & 0x0f) << 2) | ((buffer[cursor + 2] & 0xc0) >> 6)]);
+                WriteState.Append(s_base64EncodeMap[(buffer[cursor + 2] & 0x3f)]);
+            }
+
+            cursor = calcLength; //Where we left off before 
+            #endregion
+
+            // See if we need to fold before writing the last section (with possible padding)
+            if ((totalBytes % 3 != 0) && (_lineLength != -1) && (WriteState.CurrentLineLength + SizeOfBase64EncodedChar + _writeState.FooterLength >= _lineLength))
+            {
+                WriteState.AppendCRLF(true);
+            }
+
+            //now pad this thing if we need to.  Since it must be a number of bytes that is evenly divisble by 3, 
+            //if there are extra bytes, pad with '=' until we have a number of bytes divisible by 3
+            switch (totalBytes % 3)
+            {
+                case 2: //One character padding needed
+                    WriteState.Append(s_base64EncodeMap[(buffer[cursor] & 0xFC) >> 2]);
+                    WriteState.Append(s_base64EncodeMap[((buffer[cursor] & 0x03) << 4) | ((buffer[cursor + 1] & 0xf0) >> 4)]);
+
+                    //append final bytes:
+                    WriteState.Append(s_base64EncodeMap[((buffer[cursor + 1] & 0x0f) << 2)]);
+                    WriteState.Append(s_base64EncodeMap[64]);
+                    WriteState.Padding = 0;
+
+                    cursor += 2;
+                    break;
+
+                case 1: // Two character padding needed
+                    WriteState.Append(s_base64EncodeMap[(buffer[cursor] & 0xFC) >> 2]);
+
+                    //append final bytes.
+                    WriteState.Append(s_base64EncodeMap[(byte)((buffer[cursor] & 0x03) << 4)]);
+                    WriteState.Append(s_base64EncodeMap[64]);
+                    WriteState.Append(s_base64EncodeMap[64]);
+                    WriteState.Padding = 0;
+
+                    cursor++;
+                    break;
+            }
+
+            // Write out the last footer, if any.  e.g. ?=
+            WriteState.AppendFooter();
+
+            /*
+             * return the number of bytes we wrote, less the number we skipped to begin with.
+             */
+            return cursor;
+        }
+
+        public int EncodeHeaderBytes(byte[] buffer, Encoding textEncoding)
+        {
+            return EncodeBytes(buffer, 0, buffer.Length, true, true);
+        }
+
+        public int EncodeBytes(byte[] buffer, int offset, int count) { return EncodeBytes(buffer, offset, count, false, false); }
 
         internal int EncodeBytes(byte[] buffer, int offset, int count, bool dontDeferFinalBytes, bool shouldAppendSpaceToCRLF)
         {
@@ -205,41 +295,43 @@ namespace Wildbit.Corefx
             // Add Encoding header, if any. e.g. =?encoding?b?
             WriteState.AppendHeader();
 
-            int cur = offset;
+            int cursor = offset;
+            #region This is here as a continuation of processing in a stream. It is not used for encoding headers.
             switch (WriteState.Padding)
             {
                 case 2:
-                    WriteState.Append(s_base64EncodeMap[WriteState.LastBits | ((buffer[cur] & 0xf0) >> 4)]);
+                    WriteState.Append(s_base64EncodeMap[WriteState.LastBits | ((buffer[cursor] & 0xf0) >> 4)]);
                     if (count == 1)
                     {
-                        WriteState.LastBits = (byte)((buffer[cur] & 0x0f) << 2);
+                        WriteState.LastBits = (byte)((buffer[cursor] & 0x0f) << 2);
                         WriteState.Padding = 1;
-                        return cur - offset;
+                        return cursor - offset;
                     }
-                    WriteState.Append(s_base64EncodeMap[((buffer[cur] & 0x0f) << 2) | ((buffer[cur + 1] & 0xc0) >> 6)]);
-                    WriteState.Append(s_base64EncodeMap[(buffer[cur + 1] & 0x3f)]);
-                    cur += 2;
+                    WriteState.Append(s_base64EncodeMap[((buffer[cursor] & 0x0f) << 2) | ((buffer[cursor + 1] & 0xc0) >> 6)]);
+                    WriteState.Append(s_base64EncodeMap[(buffer[cursor + 1] & 0x3f)]);
+                    cursor += 2;
                     count -= 2;
                     WriteState.Padding = 0;
                     break;
                 case 1:
-                    WriteState.Append(s_base64EncodeMap[WriteState.LastBits | ((buffer[cur] & 0xc0) >> 6)]);
-                    WriteState.Append(s_base64EncodeMap[(buffer[cur] & 0x3f)]);
-                    cur++;
+                    WriteState.Append(s_base64EncodeMap[WriteState.LastBits | ((buffer[cursor] & 0xc0) >> 6)]);
+                    WriteState.Append(s_base64EncodeMap[(buffer[cursor] & 0x3f)]);
+                    cursor++;
                     count--;
                     WriteState.Padding = 0;
                     break;
             }
+            #endregion
 
             #region Write the majority of the bytes
             /*
              * To make this fast, do some bitshifting with three bytes at a time. This translates to four base64 bytes.
              */
 
-            int calcLength = cur + (count - (count % 3));
+            int calcLength = cursor + (count - (count % 3));
 
             // Convert three bytes at a time to base64 notation.  This will output 4 chars.
-            for (; cur < calcLength; cur += 3)
+            for (; cursor < calcLength; cursor += 3)
             {
                 var nextLength = WriteState.CurrentLineLength + SizeOfBase64EncodedChar + _writeState.FooterLength;
                 if (_lineLength != -1 && nextLength > _lineLength)
@@ -252,13 +344,13 @@ namespace Wildbit.Corefx
                 //this means that three bytes of data will be encoded as four base64 characters.  It also means that to encode
                 //a character, we must have three bytes to encode so if the number of bytes is not divisible by three, we 
                 //must pad the buffer (this happens below)
-                WriteState.Append(s_base64EncodeMap[(buffer[cur] & 0xfc) >> 2]);
-                WriteState.Append(s_base64EncodeMap[((buffer[cur] & 0x03) << 4) | ((buffer[cur + 1] & 0xf0) >> 4)]);
-                WriteState.Append(s_base64EncodeMap[((buffer[cur + 1] & 0x0f) << 2) | ((buffer[cur + 2] & 0xc0) >> 6)]);
-                WriteState.Append(s_base64EncodeMap[(buffer[cur + 2] & 0x3f)]);
+                WriteState.Append(s_base64EncodeMap[(buffer[cursor] & 0xfc) >> 2]);
+                WriteState.Append(s_base64EncodeMap[((buffer[cursor] & 0x03) << 4) | ((buffer[cursor + 1] & 0xf0) >> 4)]);
+                WriteState.Append(s_base64EncodeMap[((buffer[cursor + 1] & 0x0f) << 2) | ((buffer[cursor + 2] & 0xc0) >> 6)]);
+                WriteState.Append(s_base64EncodeMap[(buffer[cursor + 2] & 0x3f)]);
             }
 
-            cur = calcLength; //Where we left off before 
+            cursor = calcLength; //Where we left off before 
             #endregion
 
             // See if we need to fold before writing the last section (with possible padding)
@@ -272,37 +364,37 @@ namespace Wildbit.Corefx
             switch (count % 3)
             {
                 case 2: //One character padding needed
-                    WriteState.Append(s_base64EncodeMap[(buffer[cur] & 0xFC) >> 2]);
-                    WriteState.Append(s_base64EncodeMap[((buffer[cur] & 0x03) << 4) | ((buffer[cur + 1] & 0xf0) >> 4)]);
+                    WriteState.Append(s_base64EncodeMap[(buffer[cursor] & 0xFC) >> 2]);
+                    WriteState.Append(s_base64EncodeMap[((buffer[cursor] & 0x03) << 4) | ((buffer[cursor + 1] & 0xf0) >> 4)]);
                     if (dontDeferFinalBytes)
                     {
-                        WriteState.Append(s_base64EncodeMap[((buffer[cur + 1] & 0x0f) << 2)]);
+                        WriteState.Append(s_base64EncodeMap[((buffer[cursor + 1] & 0x0f) << 2)]);
                         WriteState.Append(s_base64EncodeMap[64]);
                         WriteState.Padding = 0;
                     }
                     else
                     {
-                        WriteState.LastBits = (byte)((buffer[cur + 1] & 0x0F) << 2);
+                        WriteState.LastBits = (byte)((buffer[cursor + 1] & 0x0F) << 2);
                         WriteState.Padding = 1;
                     }
-                    cur += 2;
+                    cursor += 2;
                     break;
 
                 case 1: // Two character padding needed
-                    WriteState.Append(s_base64EncodeMap[(buffer[cur] & 0xFC) >> 2]);
+                    WriteState.Append(s_base64EncodeMap[(buffer[cursor] & 0xFC) >> 2]);
                     if (dontDeferFinalBytes)
                     {
-                        WriteState.Append(s_base64EncodeMap[(byte)((buffer[cur] & 0x03) << 4)]);
+                        WriteState.Append(s_base64EncodeMap[(byte)((buffer[cursor] & 0x03) << 4)]);
                         WriteState.Append(s_base64EncodeMap[64]);
                         WriteState.Append(s_base64EncodeMap[64]);
                         WriteState.Padding = 0;
                     }
                     else
                     {
-                        WriteState.LastBits = (byte)((buffer[cur] & 0x03) << 4);
+                        WriteState.LastBits = (byte)((buffer[cursor] & 0x03) << 4);
                         WriteState.Padding = 2;
                     }
-                    cur++;
+                    cursor++;
                     break;
             }
 
@@ -312,7 +404,7 @@ namespace Wildbit.Corefx
             /*
              * return the number of bytes we wrote, less the number we skipped to begin with.
              */
-            return cur - offset;
+            return cursor - offset;
         }
 
         public Stream GetStream() => this;

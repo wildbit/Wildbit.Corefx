@@ -51,11 +51,11 @@ namespace Wildbit.Corefx.Mime
             WriteStateInfoBase writeState;
             if (useBase64Encoding)
             {
-                writeState = new Base64WriteStateInfo(InitialBufferSize, header, footer, DefaultMaxLineLength, headerTextLength);
+                writeState = new Base64WriteStateInfo(InitialBufferSize, header, footer, DefaultMaxLineLength, headerTextLength, encoding);
                 return new Base64Stream((Base64WriteStateInfo)writeState);
             }
 
-            writeState = new WriteStateInfoBase(InitialBufferSize, header, footer, DefaultMaxLineLength, headerTextLength);
+            writeState = new WriteStateInfoBase(InitialBufferSize, header, footer, DefaultMaxLineLength, headerTextLength, encoding);
             return new QEncodedStream(writeState);
         }
 
