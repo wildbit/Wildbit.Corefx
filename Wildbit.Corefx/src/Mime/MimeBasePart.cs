@@ -26,14 +26,7 @@ namespace Wildbit.Corefx.Mime
         //use when the length of the header is not known or if there is no header
         internal static string EncodeHeaderValue(string value, Encoding encoding, bool base64Encoding) =>
             EncodeHeaderValue(value, encoding, base64Encoding, 0);
-
-        private static readonly int SURROGATE_START_VALUE = (byte.MaxValue << 6) & byte.MaxValue;
-        private static readonly int TWO_BYTE_CHAR_VALUE = SURROGATE_START_VALUE;
-        private static readonly int THREE_BYTE_CHAR_VALUE = (byte.MaxValue << 5) & byte.MaxValue;
-        private static readonly int FOUR_BYTE_CHAR_VALUE = (byte.MaxValue << 4) & byte.MaxValue;
-
-        private static int wrapperPrototypeLength = " =??X??=".Length;
-
+        
         //used when the length of the header name itself is known (i.e. Subject : )
         internal static string EncodeHeaderValue(string value, Encoding encoding, bool base64Encoding, int headerLength)
         {
