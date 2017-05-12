@@ -25,5 +25,23 @@ namespace Wildbit.Corefx.UnitTests
  =?utf-8?B?MTY1OjY3MTA5OtGA0LXQtNC+0LLQvdCwINC+0LfQvdCw0LrQsDpwb3N0?=
  =?utf-8?B?bWFyazM=?=", messageDump);
         }
+
+        [Fact]
+        public void ASCIIHeadersDoNotNeedEncodedWordTreatmentButShouldBeFolded()
+        {
+            var message = new MailMessage();
+            message.To.Add(new MailAddress("asdf@example.com"));
+            message.From = new MailAddress("asdf@example.com");
+
+            var header = @"ASCII Chars all the way across, should never be set to encoded word, just include it with correct folding.";
+            var foldedHeader = @"Feedback-ID: ASCII Chars all the way across, should never be set to encoded
+ word, just include it with correct folding.";
+
+            message.Headers.Add("Feedback-ID", header);
+
+            var messageDump = message.MessageDump();
+
+            Assert.Contains(foldedHeader, messageDump);
+        }
     }
 }
