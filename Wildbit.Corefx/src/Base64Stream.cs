@@ -13,11 +13,6 @@ namespace Wildbit.Corefx
 {
     internal sealed class Base64Stream : DelegatedStream, IEncodableStream
     {
-        private static readonly int SURROGATE_START_VALUE = (byte.MaxValue << 6) & byte.MaxValue;
-        private static readonly int TWO_BYTE_CHAR_VALUE = SURROGATE_START_VALUE;
-        private static readonly int THREE_BYTE_CHAR_VALUE = (byte.MaxValue << 5) & byte.MaxValue;
-        private static readonly int FOUR_BYTE_CHAR_VALUE = (byte.MaxValue << 4) & byte.MaxValue;
-
         private static readonly byte[] s_base64DecodeMap = new byte[] {
             //0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
             255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255, // 0

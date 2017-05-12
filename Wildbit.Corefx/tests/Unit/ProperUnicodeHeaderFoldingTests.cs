@@ -43,5 +43,16 @@ namespace Wildbit.Corefx.UnitTests
 
             Assert.Contains(foldedHeader, messageDump);
         }
+
+        [Fact]
+        public void UnicodeAddressesDoNotEncodeAddressPart()
+        {
+            var message = new MailMessage();
+            message.To.Add(new MailAddress("asdf@example.com", "Борис Бабушкин"));
+            message.From = new MailAddress("asdf@example.com", "Борис Бабушкин");
+            
+            message.ReplyToList.Add(new MailAddress("replyto@example.com", "Борис Бабушкин"));
+            var messageDump = message.MessageDump();
+        }
     }
 }

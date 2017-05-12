@@ -240,7 +240,7 @@ namespace Wildbit.Corefx.Mail
                     //encode the displayname since it's non-ascii
                     encoder = s_encoderFactory.GetEncoderForHeader(_displayNameEncoding, false, charsConsumed);
                     buffer = _displayNameEncoding.GetBytes(_displayName);
-                    encoder.EncodeBytes(buffer, 0, buffer.Length);
+                    encoder.EncodeHeaderBytes(buffer, _displayNameEncoding);
                     encodedAddress = encoder.GetEncodedString();
                 }
 

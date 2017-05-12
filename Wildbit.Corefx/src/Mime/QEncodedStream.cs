@@ -19,6 +19,7 @@ namespace Wildbit.Corefx.Mime
     {
         //folding takes up 3 characters "\r\n "
         private const int SizeOfFoldingCRLF = 3;
+        private readonly int Folding = "=?UTF-8?Q??=".Length;
 
         private static readonly byte[] s_hexDecodeMap = new byte[]
         {
@@ -195,12 +196,141 @@ namespace Wildbit.Corefx.Mime
                         }
                     }
                 }
-            EndWhile:
+EndWhile:
                 return (int)(dest - start);
             }
         }
 
-        public int EncodeHeaderBytes(byte[] buffer, Encoding textEncoding) { return EncodeBytes(buffer, 0, buffer.Length); }
+        public int EncodeHeaderBytes(byte[] buffer, Encoding textEncoding)
+        {
+            if (textEncoding == Encoding.UTF8)
+            {
+                _writeState.AppendHeader();
+                //break the buffer up by line, call "encode bytes", and write CRLF between the lines.
+                var bufferLength = 0;
+                var bufferedRequiredSpace = 0;
+                var offset = 0;
+                for (var i = 0; i < buffer.Length;)
+                {
+                    var requiredQPSpace = 1;
+                    var b = buffer[i];
+                    var bytesProcessed = 1;
+                    if (!IsAsciiLetterOrDigit((char)b))
+                    {
+                        if ((b & SURROGATE_START_VALUE) > 0)
+                        {
+                            if ((b & FOUR_BYTE_CHAR_VALUE) == FOUR_BYTE_CHAR_VALUE)
+                            {
+                                requiredQPSpace = 12;
+                                bytesProcessed = 4;
+                            }
+                            else if ((b & THREE_BYTE_CHAR_VALUE) == THREE_BYTE_CHAR_VALUE)
+                            {
+                                requiredQPSpace = 9;
+                                bytesProcessed = 3;
+                            }
+                            else if ((b & TWO_BYTE_CHAR_VALUE) == TWO_BYTE_CHAR_VALUE)
+                            {
+                                requiredQPSpace = 6;
+                                bytesProcessed = 2;
+                            }
+                        }
+                        else if (b <= 127)
+                        {
+                            {
+                                requiredQPSpace = 3;
+                                bytesProcessed = 1;
+                            }
+                        }
+                        else
+                        {
+                            //do nothing here, because this is a byte from a UTF-8 multi-byte char, 
+                            //and we accounted for it with the SURROGATE_PAIR check above.
+                            requiredQPSpace = 0;
+                            bytesProcessed = 1;
+                        }
+                    }
+
+                    //the required space is > than available space, store this line, and then move to the next.
+                    if ((bufferedRequiredSpace + requiredQPSpace + _writeState.CurrentLineLength) + Folding > _writeState.MaxLineLength)
+                    {
+                        EncodeBytesNoWrapper(buffer, offset, bufferLength);
+                        offset += bufferLength;
+                        bufferedRequiredSpace = requiredQPSpace;
+                        bufferLength = bytesProcessed;
+                        if (offset + 1 < buffer.Length)
+                        {
+                            _writeState.AppendCRLF(true);
+                        }
+                    }
+                    else
+                    {
+                        bufferedRequiredSpace += requiredQPSpace;
+                        bufferLength += bytesProcessed;
+                    }
+
+                    i += bytesProcessed;
+                }
+
+                if (bufferLength > 0)
+                {
+                    EncodeBytesNoWrapper(buffer, offset, bufferLength);
+                }
+                _writeState.AppendFooter();
+                return buffer.Length;
+            }
+            else if (textEncoding == null || textEncoding == Encoding.ASCII)
+            {
+                return EncodeBytes(buffer, 0, buffer.Length);
+            }
+            else
+            {
+                throw new NotSupportedException("The character encodings other than 'UTF-8', 'ASCII', and 'binary' are ot supported");
+            }
+        }
+
+        public void EncodeBytesNoWrapper(byte[] buffer, int offset, int count)
+        {
+            // Scan one character at a time looking for chars that need to be encoded.
+            int cur = offset;
+            for (; cur < count + offset; cur++)
+            {
+                // We don't need to worry about RFC 2821 4.5.2 (encoding first dot on a line),
+                // it is done by the underlying 7BitStream
+
+                //always encode CRLF
+                if (buffer[cur] == '\r' && cur + 1 < count + offset && buffer[cur + 1] == '\n')
+                {
+                    cur++;
+
+                    //the encoding for CRLF is =0D=0A
+                    WriteState.Append((byte)'=', (byte)'0', (byte)'D', (byte)'=', (byte)'0', (byte)'A');
+                }
+                else if (buffer[cur] == ' ')
+                {
+                    //spaces should be escaped as either '_' or '=20' and
+                    //we have chosen '_' for parity with other email client
+                    //behavior
+                    WriteState.Append((byte)'_');
+                }
+                // RFC 2047 Section 5 part 3 also allows for !*+-/ but these arn't required in headers.
+                // Conservatively encode anything but letters or digits.
+                else if (IsAsciiLetterOrDigit((char)buffer[cur]))
+                {
+                    // Just a regular printable ascii char.
+                    WriteState.Append(buffer[cur]);
+                }
+                else
+                {
+                    //append an = to indicate an encoded character
+                    WriteState.Append((byte)'=');
+                    //shift 4 to get the first four bytes only and look up the hex digit
+                    WriteState.Append(s_hexEncodeMap[buffer[cur] >> 4]);
+                    //clear the first four bytes to get the last four and look up the hex digit
+                    WriteState.Append(s_hexEncodeMap[buffer[cur] & 0xF]);
+                }
+            }
+        }
 
         public int EncodeBytes(byte[] buffer, int offset, int count)
         {
