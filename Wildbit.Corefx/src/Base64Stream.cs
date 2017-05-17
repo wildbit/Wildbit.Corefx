@@ -7,6 +7,7 @@ using System.IO;
 using Wildbit.Corefx.Mime;
 using System.Text;
 using System;
+using System.Collections.Generic;
 
 namespace Wildbit.Corefx
 {
@@ -193,15 +194,93 @@ namespace Wildbit.Corefx
             }
         }
 
-        public int EncodeHeaderBytesWIP(byte[] buffer, Encoding textEncoding)
+        public int EncodeHeaderBytes(byte[] buffer, Encoding textEncoding)
         {
             Debug.Assert(buffer != null, "buffer was null");
             Debug.Assert(_writeState != null, "writestate was null");
             Debug.Assert(_writeState.Buffer != null, "writestate.buffer was null");
+
+            if (textEncoding == Encoding.UTF8)
+            {
+                return EncodeUTF8BinaryHeader(buffer);
+            }
+            else if (textEncoding == Encoding.ASCII || textEncoding == null)
+            {
+                return EncodeOpaqueBinaryHeader(buffer);
+            }
+            else
+            {
+                throw new NotSupportedException(
+                    "The text encoding used for the headers is not supported. Only UTF-8, " +
+                    "ASCII, or 'binary' data can be encoded into headers.");
+            }
+        }
+
+        private int headerOverhead = $" =?UTF-8?B??=".Length;
+
+        private int EncodeUTF8BinaryHeader(byte[] buffer)
+        {
+
+            // Add Encoding header, if any. e.g. =?encoding?b?
+           
+
+            var lineBytes = new List<List<byte>>((int)Math.Ceiling((float)buffer.Length / _writeState.MaxLineLength));
+            var currentLine = new List<byte>(_writeState.MaxLineLength);
+
+            var currentOverhead = WriteState.CurrentLineLength + headerOverhead;
+            WriteState.AppendHeader();
+
+            foreach (var b in buffer)
+            {
+                var requiredSpace = 1;
+                if((b & SURROGATE_START_VALUE) > 0)
+                {
+                    if((b & FOUR_BYTE_CHAR_VALUE) == FOUR_BYTE_CHAR_VALUE){ requiredSpace = 4; }
+                    else if ((b & THREE_BYTE_CHAR_VALUE) == THREE_BYTE_CHAR_VALUE){ requiredSpace = 3; }
+                    else if ((b & TWO_BYTE_CHAR_VALUE) == TWO_BYTE_CHAR_VALUE){ requiredSpace = 2; }
+                }
+
+                //the required space is > than available space, store this line, and then move to the next.
+                if (((Math.Ceiling((currentLine.Count + requiredSpace) / 3d) * 4) + currentOverhead) > _writeState.MaxLineLength)
+                {
+                    lineBytes.Add(currentLine);
+                    currentLine = new List<byte>(_writeState.MaxLineLength);
+                    currentOverhead = headerOverhead;
+                }
+                currentLine.Add(b);
+            }
+
+            if(currentLine.Count > 0)
+            {
+                lineBytes.Add(currentLine);
+            }
             
+            for (var i = 0; i < lineBytes.Count; i++)
+            {
+                // The naive way of encoding base64 headers:
+                // and then write them to the line.
+                WriteState.Append(Encoding.ASCII.GetBytes(Convert.ToBase64String(lineBytes[i].ToArray())));
+
+                //WriteState.Append(s_base64EncodeMap[(buffer[cursor] & 0xfc) >> 2]);
+                //WriteState.Append(s_base64EncodeMap[((buffer[cursor] & 0x03) << 4) | ((buffer[cursor + 1] & 0xf0) >> 4)]);
+                //WriteState.Append(s_base64EncodeMap[((buffer[cursor + 1] & 0x0f) << 2) | ((buffer[cursor + 2] & 0xc0) >> 6)]);
+                //WriteState.Append(s_base64EncodeMap[(buffer[cursor + 2] & 0x3f)]);
+
+                //Append a split at the end of the line, except for the last line, which will get a footer.
+                if (i + 1 != lineBytes.Count)
+                { WriteState.AppendCRLF(true); }
+            }
+
+            WriteState.AppendFooter();
+            return buffer.Length;
+        }
+
+
+        private int EncodeOpaqueBinaryHeader(byte[] buffer)
+        {
             // Add Encoding header, if any. e.g. =?encoding?b?
             WriteState.AppendHeader();
-            
+
             var totalBytes = buffer.Length;
             var cursor = 0;
 
@@ -277,11 +356,6 @@ namespace Wildbit.Corefx
              * return the number of bytes we wrote, less the number we skipped to begin with.
              */
             return cursor;
-        }
-
-        public int EncodeHeaderBytes(byte[] buffer, Encoding textEncoding)
-        {
-            return EncodeBytes(buffer, 0, buffer.Length, true, true);
         }
 
         public int EncodeBytes(byte[] buffer, int offset, int count) { return EncodeBytes(buffer, offset, count, false, false); }

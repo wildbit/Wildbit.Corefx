@@ -12,6 +12,11 @@ namespace Wildbit.Corefx
 {
     internal class DelegatedStream : Stream
     {
+        protected static readonly int SURROGATE_START_VALUE = (byte.MaxValue << 6) & byte.MaxValue;
+        protected static readonly int TWO_BYTE_CHAR_VALUE = SURROGATE_START_VALUE;
+        protected static readonly int THREE_BYTE_CHAR_VALUE = (byte.MaxValue << 5) & byte.MaxValue;
+        protected static readonly int FOUR_BYTE_CHAR_VALUE = (byte.MaxValue << 4) & byte.MaxValue;
+
         private readonly Stream _stream;
         private readonly NetworkStream _netStream;
 
