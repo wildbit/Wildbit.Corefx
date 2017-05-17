@@ -22,9 +22,10 @@ namespace Wildbit.Corefx.Mail
                 message.Send(writer, false, !escapeUnicode);
 
                 var encoding = !escapeUnicode ? Encoding.UTF8 : Encoding.ASCII;
-                ms.Position = 0;
 
-                return encoding.GetString(ms.GetBuffer());
+                var count = (int)ms.Position;
+                ms.Position = 0;
+                return encoding.GetString(ms.GetBuffer(), 0, count);
             }
         }
     }
