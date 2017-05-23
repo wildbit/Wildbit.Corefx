@@ -23,29 +23,6 @@ using System.Security;
 
 namespace Wildbit.Corefx
 {
-    #if !NET46
-    internal class FormattableString : IFormattable
-    {
-        public int ArgumentCount { get; set; }
-        public string Format { get; set; }
-
-        public object GetArgument(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public object[] GetArguments()
-        {
-            throw new NotImplementedException();
-        }
-
-        string IFormattable.ToString(string format, IFormatProvider formatProvider)
-        {
-            return Format.ToString(formatProvider);
-        }
-    }
-    #endif
-
     // Implementation:
     // This partial file is meant to be consumed into each System.Net.* assembly that needs to log.  Each such assembly also provides
     // its own NetEventSource partial class that adds an appropriate [EventSource] attribute, giving it a unique name for that assembly.
@@ -103,10 +80,11 @@ namespace Wildbit.Corefx
         private const int DumpArrayEventId = 7;
 
         private const int NextAvailableEventId = 8; // Update this value whenever new events are added.  Derived types should base all events off of this to avoid conflicts.
-#endregion
+        #endregion
 
-#region Events
-#region Enter
+        #region Events
+        #region Enter
+#if NET46
         /// <summary>Logs entrance to a method.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="formattableString">A description of the entrance, including any arguments to the call.</param>
@@ -117,7 +95,19 @@ namespace Wildbit.Corefx
             DebugValidateArg(thisOrContextObject);
             DebugValidateArg(formattableString);
             if (IsEnabled) Log.Enter(IdOf(thisOrContextObject), memberName, formattableString != null ? Format(formattableString) : NoParameters);
+        }  
+#else
+        /// <summary>Logs entrance to a method.</summary>
+        /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
+        /// <param name="memberName">The calling member.</param>
+        [NonEvent]
+        public static void Enter(object thisOrContextObject, [CallerMemberName] string memberName = null)
+        {
+            DebugValidateArg(thisOrContextObject);
+            if (IsEnabled)
+                Log.Enter(IdOf(thisOrContextObject), memberName, NoParameters);
         }
+#endif
 
         /// <summary>Logs entrance to a method.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
@@ -164,9 +154,10 @@ namespace Wildbit.Corefx
         [Event(EnterEventId, Level = EventLevel.Informational, Keywords = Keywords.EnterExit)]
         private void Enter(string thisOrContextObject, string memberName, string parameters) =>
             WriteEvent(EnterEventId, thisOrContextObject, memberName ?? MissingMember, parameters);
-#endregion
+        #endregion
 
-#region Exit
+        #region Exit
+#if NET46
         /// <summary>Logs exit from a method.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="formattableString">A description of the exit operation, including any return values.</param>
@@ -176,8 +167,21 @@ namespace Wildbit.Corefx
         {
             DebugValidateArg(thisOrContextObject);
             DebugValidateArg(formattableString);
-            if (IsEnabled) Log.Exit(IdOf(thisOrContextObject), memberName, formattableString != null ? Format(formattableString) : NoParameters);
+            if (IsEnabled)
+                Log.Exit(IdOf(thisOrContextObject), memberName, formattableString != null ? Format(formattableString) : NoParameters);
         }
+#else
+        /// <summary>Logs exit from a method.</summary>
+        /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
+        /// <param name="memberName">The calling member.</param>
+        [NonEvent]
+        public static void Exit(object thisOrContextObject, [CallerMemberName] string memberName = null)
+        {
+            DebugValidateArg(thisOrContextObject);
+            if (IsEnabled)
+                Log.Exit(IdOf(thisOrContextObject), memberName, NoParameters);
+        }
+#endif
 
         /// <summary>Logs exit from a method.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
@@ -211,6 +215,7 @@ namespace Wildbit.Corefx
 #endregion
 
 #region Info
+#if NET46
         /// <summary>Logs an information message.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="formattableString">The message to be logged.</param>
@@ -222,7 +227,19 @@ namespace Wildbit.Corefx
             DebugValidateArg(formattableString);
             if (IsEnabled) Log.Info(IdOf(thisOrContextObject), memberName, formattableString != null ? Format(formattableString) : NoParameters);
         }
-
+#else
+        /// <summary>Logs an information message.</summary>
+        /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
+        /// <param name="formattableString">The message to be logged.</param>
+        /// <param name="memberName">The calling member.</param>
+        [NonEvent]
+        public static void Info(object thisOrContextObject, [CallerMemberName] string memberName = null)
+        {
+            DebugValidateArg(thisOrContextObject);
+            if (IsEnabled)
+                Log.Info(IdOf(thisOrContextObject), memberName, NoParameters);
+        }
+#endif
         /// <summary>Logs an information message.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="message">The message to be logged.</param>
@@ -241,6 +258,7 @@ namespace Wildbit.Corefx
 #endregion
 
 #region Error
+#if NET46
         /// <summary>Logs an error message.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="formattableString">The message to be logged.</param>
@@ -252,7 +270,7 @@ namespace Wildbit.Corefx
             DebugValidateArg(formattableString);
             if (IsEnabled) Log.ErrorMessage(IdOf(thisOrContextObject), memberName, Format(formattableString));
         }
-
+#endif
         /// <summary>Logs an error message.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="message">The message to be logged.</param>
@@ -268,9 +286,10 @@ namespace Wildbit.Corefx
         [Event(ErrorEventId, Level = EventLevel.Warning, Keywords = Keywords.Default)]
         private void ErrorMessage(string thisOrContextObject, string memberName, string message) =>
             WriteEvent(InfoEventId, thisOrContextObject, memberName ?? MissingMember, message);
-#endregion
+        #endregion
 
-#region Fail
+        #region Fail
+#if NET46
         /// <summary>Logs a fatal error and raises an assert.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="formattableString">The message to be logged.</param>
@@ -281,9 +300,11 @@ namespace Wildbit.Corefx
             // Don't call DebugValidateArg on args, as we expect Fail to be used in assert/failure situations
             // that should never happen in production, and thus we don't care about extra costs.
 
-            if (IsEnabled) Log.CriticalFailure(IdOf(thisOrContextObject), memberName, Format(formattableString));
+            if (IsEnabled)
+                Log.CriticalFailure(IdOf(thisOrContextObject), memberName, Format(formattableString));
             Debug.Fail(Format(formattableString), $"{IdOf(thisOrContextObject)}.{memberName}");
-        }
+        } 
+#endif
 
         /// <summary>Logs a fatal error and raises an assert.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
@@ -302,9 +323,10 @@ namespace Wildbit.Corefx
         [Event(CriticalFailureEventId, Level = EventLevel.Critical, Keywords = Keywords.Debug)]
         private void CriticalFailure(string thisOrContextObject, string memberName, string message) =>
             WriteEvent(InfoEventId, thisOrContextObject, memberName ?? MissingMember, message);
-#endregion
+        #endregion
 
-#region DumpBuffer
+        #region DumpBuffer
+#if NET46
         /// <summary>Logs the contents of a buffer.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="buffer">The buffer to be logged.</param>
@@ -313,7 +335,8 @@ namespace Wildbit.Corefx
         public static void DumpBuffer(object thisOrContextObject, byte[] buffer, [CallerMemberName] string memberName = null)
         {
             DumpBuffer(thisOrContextObject, buffer, 0, buffer.Length, memberName);
-        }
+        } 
+#endif
 
         /// <summary>Logs the contents of a buffer.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
@@ -344,6 +367,7 @@ namespace Wildbit.Corefx
                 Log.DumpBuffer(IdOf(thisOrContextObject), memberName, slice);
             }
         }
+#if NET46
 
         /// <summary>Logs the contents of a buffer.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
@@ -359,18 +383,17 @@ namespace Wildbit.Corefx
             if (IsEnabled)
             {
                 var buffer = new byte[Math.Min(count, MaxDumpSize)];
-#if !NET46
-                Array.Copy(buffer, buffer, buffer.Length);
-#else
+
                 fixed (byte* targetPtr = buffer)
                 {
-                    //Buffer.MemoryCopy((byte*)bufferPtr, targetPtr, buffer.Length, buffer.Length);
+                    Buffer.MemoryCopy((byte*)bufferPtr, targetPtr, buffer.Length, buffer.Length);
                 }
-#endif
+
                 Log.DumpBuffer(IdOf(thisOrContextObject), memberName, buffer);
             }
         }
 
+#endif
         [Event(DumpArrayEventId, Level = EventLevel.Verbose, Keywords = Keywords.Debug)]
         private unsafe void DumpBuffer(string thisOrContextObject, string memberName, byte[] buffer) =>
             WriteEvent(DumpArrayEventId, thisOrContextObject, memberName ?? MissingMember, buffer);
@@ -416,15 +439,19 @@ namespace Wildbit.Corefx
             if (!IsEnabled)
             {
                 Debug.Assert(!(arg is ValueType), $"Should not be passing value type {arg?.GetType()} to logging without IsEnabled check");
+#if NET46
                 Debug.Assert(!(arg is FormattableString), $"Should not be formatting FormattableString \"{arg}\" if tracing isn't enabled");
+#endif
             }
         }
 
+#if NET46
         [Conditional("DEBUG_NETEVENTSOURCE_MISUSE")]
         private static void DebugValidateArg(FormattableString arg)
         {
             Debug.Assert(IsEnabled || arg == null, $"Should not be formatting FormattableString \"{arg}\" if tracing isn't enabled");
         }
+#endif
 
         public static new bool IsEnabled => Log.IsEnabled();
 
@@ -490,15 +517,20 @@ namespace Wildbit.Corefx
             return value;
         }
 
+#if NET46
         [NonEvent]
         private static string Format(FormattableString s)
         {
             switch (s.ArgumentCount)
             {
-                case 0: return s.Format;
-                case 1: return string.Format(s.Format, Format(s.GetArgument(0)));
-                case 2: return string.Format(s.Format, Format(s.GetArgument(0)), Format(s.GetArgument(1)));
-                case 3: return string.Format(s.Format, Format(s.GetArgument(0)), Format(s.GetArgument(1)), Format(s.GetArgument(2)));
+                case 0:
+                    return s.Format;
+                case 1:
+                    return string.Format(s.Format, Format(s.GetArgument(0)));
+                case 2:
+                    return string.Format(s.Format, Format(s.GetArgument(0)), Format(s.GetArgument(1)));
+                case 3:
+                    return string.Format(s.Format, Format(s.GetArgument(0)), Format(s.GetArgument(1)), Format(s.GetArgument(2)));
                 default:
                     object[] args = s.GetArguments();
                     object[] formattedArgs = new object[args.Length];
@@ -508,7 +540,8 @@ namespace Wildbit.Corefx
                     }
                     return string.Format(s.Format, formattedArgs);
             }
-        }
+        } 
+#endif
 
         static partial void AdditionalCustomizedToString<T>(T value, ref string result);
 #endregion

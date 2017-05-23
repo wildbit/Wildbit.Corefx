@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wildtbit.Corefx", "Wildbit.Corefx\src\Wildtbit.Corefx.csproj", "{A1CEEB68-ECD5-4FD5-B35E-11D53ACED133}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wildbit.Corefx", "Wildbit.Corefx\src\Wildbit.Corefx.csproj", "{A1CEEB68-ECD5-4FD5-B35E-11D53ACED133}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wildbit.Corefx.UnitTests", "Wildbit.Corefx\tests\Unit\Wildbit.Corefx.UnitTests.csproj", "{66FF625D-10D4-4C27-BE5D-C6412C4A001F}"
 EndProject

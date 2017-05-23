@@ -80,9 +80,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Wildtbit.Corefx.csproj">
+    <ProjectReference Include="..\..\src\Wildbit.Corefx.csproj">
       <Project>{a1ceeb68-ecd5-4fd5-b35e-11d53aced133}</Project>
-      <Name>Wildtbit.Corefx</Name>
+      <Name>Wildbit.Corefx</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
