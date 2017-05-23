@@ -18,8 +18,34 @@ using System.Runtime.InteropServices;
 using System.Security;
 #endif
 
+
+
+
 namespace Wildbit.Corefx
 {
+    #if !NET46
+    internal class FormattableString : IFormattable
+    {
+        public int ArgumentCount { get; set; }
+        public string Format { get; set; }
+
+        public object GetArgument(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] GetArguments()
+        {
+            throw new NotImplementedException();
+        }
+
+        string IFormattable.ToString(string format, IFormatProvider formatProvider)
+        {
+            return Format.ToString(formatProvider);
+        }
+    }
+    #endif
+
     // Implementation:
     // This partial file is meant to be consumed into each System.Net.* assembly that needs to log.  Each such assembly also provides
     // its own NetEventSource partial class that adds an appropriate [EventSource] attribute, giving it a unique name for that assembly.
@@ -46,7 +72,7 @@ namespace Wildbit.Corefx
     //   method that takes an object and optionally provides a string representation of it, in case a particular library wants to customize further.
 
     /// <summary>Provides logging facilities for System.Net libraries.</summary>
-#if NET46    
+#if NET46
     [SecuritySafeCritical]
 #endif
     internal sealed partial class NetEventSource : EventSource
@@ -54,7 +80,7 @@ namespace Wildbit.Corefx
         /// <summary>The single event source instance to use for all logging.</summary>
         public static readonly NetEventSource Log = new NetEventSource();
 
-        #region Metadata
+#region Metadata
         public class Keywords
         {
             public const EventKeywords Default = (EventKeywords)0x0001;
@@ -77,10 +103,10 @@ namespace Wildbit.Corefx
         private const int DumpArrayEventId = 7;
 
         private const int NextAvailableEventId = 8; // Update this value whenever new events are added.  Derived types should base all events off of this to avoid conflicts.
-        #endregion
+#endregion
 
-        #region Events
-        #region Enter
+#region Events
+#region Enter
         /// <summary>Logs entrance to a method.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="formattableString">A description of the entrance, including any arguments to the call.</param>
@@ -138,9 +164,9 @@ namespace Wildbit.Corefx
         [Event(EnterEventId, Level = EventLevel.Informational, Keywords = Keywords.EnterExit)]
         private void Enter(string thisOrContextObject, string memberName, string parameters) =>
             WriteEvent(EnterEventId, thisOrContextObject, memberName ?? MissingMember, parameters);
-        #endregion
+#endregion
 
-        #region Exit
+#region Exit
         /// <summary>Logs exit from a method.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="formattableString">A description of the exit operation, including any return values.</param>
@@ -182,9 +208,9 @@ namespace Wildbit.Corefx
         [Event(ExitEventId, Level = EventLevel.Informational, Keywords = Keywords.EnterExit)]
         private void Exit(string thisOrContextObject, string memberName, string result) =>
             WriteEvent(ExitEventId, thisOrContextObject, memberName ?? MissingMember, result);
-        #endregion
+#endregion
 
-        #region Info
+#region Info
         /// <summary>Logs an information message.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="formattableString">The message to be logged.</param>
@@ -212,9 +238,9 @@ namespace Wildbit.Corefx
         [Event(InfoEventId, Level = EventLevel.Informational, Keywords = Keywords.Default)]
         private void Info(string thisOrContextObject, string memberName, string message) =>
             WriteEvent(InfoEventId, thisOrContextObject, memberName ?? MissingMember, message);
-        #endregion
+#endregion
 
-        #region Error
+#region Error
         /// <summary>Logs an error message.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="formattableString">The message to be logged.</param>
@@ -242,9 +268,9 @@ namespace Wildbit.Corefx
         [Event(ErrorEventId, Level = EventLevel.Warning, Keywords = Keywords.Default)]
         private void ErrorMessage(string thisOrContextObject, string memberName, string message) =>
             WriteEvent(InfoEventId, thisOrContextObject, memberName ?? MissingMember, message);
-        #endregion
+#endregion
 
-        #region Fail
+#region Fail
         /// <summary>Logs a fatal error and raises an assert.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="formattableString">The message to be logged.</param>
@@ -276,9 +302,9 @@ namespace Wildbit.Corefx
         [Event(CriticalFailureEventId, Level = EventLevel.Critical, Keywords = Keywords.Debug)]
         private void CriticalFailure(string thisOrContextObject, string memberName, string message) =>
             WriteEvent(InfoEventId, thisOrContextObject, memberName ?? MissingMember, message);
-        #endregion
+#endregion
 
-        #region DumpBuffer
+#region DumpBuffer
         /// <summary>Logs the contents of a buffer.</summary>
         /// <param name="thisOrContextObject">`this`, or another object that serves to provide context for the operation.</param>
         /// <param name="buffer">The buffer to be logged.</param>
@@ -333,10 +359,14 @@ namespace Wildbit.Corefx
             if (IsEnabled)
             {
                 var buffer = new byte[Math.Min(count, MaxDumpSize)];
+#if !NET46
+                Array.Copy(buffer, buffer, buffer.Length);
+#else
                 fixed (byte* targetPtr = buffer)
                 {
-                    Buffer.MemoryCopy((byte*)bufferPtr, targetPtr, buffer.Length, buffer.Length);
+                    //Buffer.MemoryCopy((byte*)bufferPtr, targetPtr, buffer.Length, buffer.Length);
                 }
+#endif
                 Log.DumpBuffer(IdOf(thisOrContextObject), memberName, buffer);
             }
         }
@@ -344,9 +374,9 @@ namespace Wildbit.Corefx
         [Event(DumpArrayEventId, Level = EventLevel.Verbose, Keywords = Keywords.Debug)]
         private unsafe void DumpBuffer(string thisOrContextObject, string memberName, byte[] buffer) =>
             WriteEvent(DumpArrayEventId, thisOrContextObject, memberName ?? MissingMember, buffer);
-        #endregion
+#endregion
 
-        #region Associate
+#region Associate
         /// <summary>Logs a relationship between two objects.</summary>
         /// <param name="first">The first object.</param>
         /// <param name="second">The second object.</param>
@@ -376,10 +406,10 @@ namespace Wildbit.Corefx
         [Event(AssociateEventId, Level = EventLevel.Informational, Keywords = Keywords.Default, Message = "[{2}]<-->[{3}]")]
         private void Associate(string thisOrContextObject, string memberName, string first, string second) =>
             WriteEvent(AssociateEventId, thisOrContextObject, memberName ?? MissingMember, first, second);
-        #endregion
-        #endregion
+#endregion
+#endregion
 
-        #region Helpers
+#region Helpers
         [Conditional("DEBUG_NETEVENTSOURCE_MISUSE")]
         private static void DebugValidateArg(object arg)
         {
@@ -481,9 +511,9 @@ namespace Wildbit.Corefx
         }
 
         static partial void AdditionalCustomizedToString<T>(T value, ref string result);
-        #endregion
+#endregion
 
-        #region Custom WriteEvent overloads
+#region Custom WriteEvent overloads
 
         [NonEvent]
         private unsafe void WriteEvent(int eventId, string arg1, string arg2, string arg3, string arg4)
@@ -671,6 +701,6 @@ namespace Wildbit.Corefx
                 }
             }
         }
-        #endregion
+#endregion
     }
 }

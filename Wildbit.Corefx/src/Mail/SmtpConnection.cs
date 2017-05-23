@@ -146,9 +146,12 @@ namespace Wildbit.Corefx.Mail
                         {
                             _channelBindingToken.Close();
                         }
-
-                        _networkStream.Close();
+#if !NET46
+                        _tcpClient.Close();
+#else
+                         _networkStream.Close();
                         _tcpClient.Dispose();
+#endif
                     }
 
                     _isClosed = true;
@@ -177,8 +180,12 @@ namespace Wildbit.Corefx.Mail
                         // DATA command or some similar situation.  This may send a RST
                         // but this is ok in this situation.  Do not reuse this connection
                         _tcpClient.LingerState = new LingerOption(true, 0);
-                        _networkStream.Close();
+#if !NET46
+                        _tcpClient.Close();
+#else
+                         _networkStream.Close();
                         _tcpClient.Dispose();
+#endif
                     }
                     _isClosed = true;
                 }
