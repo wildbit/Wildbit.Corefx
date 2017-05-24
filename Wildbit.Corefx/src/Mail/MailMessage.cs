@@ -110,7 +110,7 @@ namespace Wildbit.Corefx.Mail
         {
             get
             {
-               return _message.EmitSenderHeader;
+                return _message.EmitSenderHeader;
             }
             set
             {
@@ -325,6 +325,21 @@ namespace Wildbit.Corefx.Mail
         }
 
         /// <summary>
+        /// Should we include the Bcc header in the message content?
+        /// </summary>
+        public bool DisplayBccHeader
+        {
+            get
+            {
+                return _message.DisplayBccHeader;
+            }
+            set
+            {
+                _message.DisplayBccHeader = value;
+            }
+        }
+
+        /// <summary>
         /// Associated attachments. Ignored when using MimeBody
         /// </summary>
         public AttachmentCollection Attachments
@@ -406,7 +421,7 @@ namespace Wildbit.Corefx.Mail
                 _bodyView = null;
             }
 
-            if(MimeBody != null)
+            if (MimeBody != null)
             {
                 _message.Content = MimeBody;
             }
