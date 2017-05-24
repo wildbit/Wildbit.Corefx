@@ -507,6 +507,12 @@ namespace Wildbit.Corefx.Mail
 
             Headers.Remove(MailHeaderInfo.GetString(MailHeaderID.Bcc));
 
+            if (DisplayBccHeader && Bcc.Count > 0)
+            {
+                headerName = MailHeaderInfo.GetString(MailHeaderID.Bcc);
+                Headers.InternalAdd(headerName, Bcc.Encode(headerName.Length, allowUnicode));
+            }
+
             if (_priority == MailPriority.High)
             {
                 Headers[MailHeaderInfo.GetString(MailHeaderID.XPriority)] = "1";
@@ -632,6 +638,11 @@ namespace Wildbit.Corefx.Mail
         /// "less spammy". This was a valid hueristic in 2012-ish, but may have changed.
         /// </remarks>
         public bool PreferQEncodeForHeaders { get; set; }
+
+        /// <summary>
+        /// Should we include the Bcc header in the message content?
+        /// </summary>
+        public bool DisplayBccHeader { get; set; }
 
         #endregion Sending
     }
