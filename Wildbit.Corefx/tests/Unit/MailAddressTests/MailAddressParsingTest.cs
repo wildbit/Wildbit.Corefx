@@ -166,7 +166,15 @@ namespace Wildbit.Corefx.UnitTests
         [MemberData(nameof(GetInvalidEmailTestData))]
         public void TestInvalidEmailAddresses(string address)
         {
-            Assert.Throws<FormatException>(() => { new MailAddress(address); });
+            try
+            {
+                var address2 = new MailAddress(address);
+                Assert.False(true);
+            }
+            catch(FormatException)
+            {
+                
+            }
         }
     }
 }
