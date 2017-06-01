@@ -98,13 +98,15 @@ namespace Wildbit.Corefx.UnitTests
             Assert.True(ContainsNonAscii(output[1]), output[1]);
         }
 
-        [Fact]
-        public void EncodeHeaders_WithHeadersEncodingPropertySet_ShouldEncodeWithProperEncoding()
+        [Theory]
+        [InlineData("utf-8")]
+        [InlineData("utf-32", Skip="utf-32 encoding was removed because the byte-breaking algorithm for q-words is optimized for utf-8")]
+        public void EncodeHeaders_WithHeadersEncodingPropertySet_ShouldEncodeWithProperEncoding(string encodingName)
         {
             //note:  this is the WRONG code page to use for the unicode value supplied:  we are not testing that
             //here, we care about whether or not it is using the correct encoding value to encode as specified
             //in the HeadersEncoding property.
-            Encoding encoding = Encoding.GetEncoding("utf-32");
+            Encoding encoding = Encoding.GetEncoding(encodingName);
             _message.HeadersEncoding = encoding;
             _headers.Add("X-Custom", CustomUnicodeHeaderValue);
             _message.EncodeHeaders(_headers, false);
@@ -113,7 +115,7 @@ namespace Wildbit.Corefx.UnitTests
             Assert.True(encodedHeader.StartsWith("="), "didn't start with =");
             Assert.True(encodedHeader.EndsWith("="), "didn't end with =");
             string[] splits = encodedHeader.Split(new char[] { '?' }, StringSplitOptions.RemoveEmptyEntries);
-            Assert.Equal("utf-32", splits[1]);
+            Assert.Equal(encodingName, splits[1]);
             Assert.Equal(encoding, _message.HeadersEncoding);
 
             // Allow Unicode, ignore header encoding
