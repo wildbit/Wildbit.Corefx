@@ -340,6 +340,19 @@ namespace Wildbit.Corefx.Mail
         }
 
         /// <summary>
+        /// Determine whether To, Cc, Bcc headers should be appended/replace 
+        /// those same headers if they have been set manually.
+        /// 
+        /// Defaults to true.
+        /// </summary>
+        /// <remarks>This allows finer-grained control over how headers can be set.</remarks>
+        public bool AutomaticallyBuildAndApplyRecipientHeaders
+        {
+            get { return _message.AutomaticallyBuildAndApplyRecipientHeaders; }
+            set { _message.AutomaticallyBuildAndApplyRecipientHeaders = value; }
+        }
+
+        /// <summary>
         /// Associated attachments. Ignored when using MimeBody
         /// </summary>
         public AttachmentCollection Attachments

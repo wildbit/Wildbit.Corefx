@@ -471,24 +471,27 @@ namespace Wildbit.Corefx.Mail
             headerName = MailHeaderInfo.GetString(MailHeaderID.From);
             Headers.InternalAdd(headerName, From.Encode(headerName.Length, allowUnicode));
 
-            headerName = MailHeaderInfo.GetString(MailHeaderID.To);
-            if (To.Count > 0)
+            if (AutomaticallyBuildAndApplyRecipientHeaders)
             {
-                Headers.InternalAdd(headerName, To.Encode(headerName.Length, allowUnicode));
-            }
-            else
-            {
-                Headers.Remove(headerName);
-            }
+                headerName = MailHeaderInfo.GetString(MailHeaderID.To);
+                if (To.Count > 0)
+                {
+                    Headers.InternalAdd(headerName, To.Encode(headerName.Length, allowUnicode));
+                }
+                else
+                {
+                    Headers.Remove(headerName);
+                }
 
-            headerName = MailHeaderInfo.GetString(MailHeaderID.Cc);
-            if (CC.Count > 0)
-            {
-                Headers.InternalAdd(headerName, CC.Encode(headerName.Length, allowUnicode));
-            }
-            else
-            {
-                Headers.Remove(headerName);
+                headerName = MailHeaderInfo.GetString(MailHeaderID.Cc);
+                if (CC.Count > 0)
+                {
+                    Headers.InternalAdd(headerName, CC.Encode(headerName.Length, allowUnicode));
+                }
+                else
+                {
+                    Headers.Remove(headerName);
+                }
             }
 
             headerName = MailHeaderInfo.GetString(MailHeaderID.ReplyTo);
@@ -507,7 +510,7 @@ namespace Wildbit.Corefx.Mail
 
             Headers.Remove(MailHeaderInfo.GetString(MailHeaderID.Bcc));
 
-            if (DisplayBccHeader && Bcc.Count > 0)
+            if (AutomaticallyBuildAndApplyRecipientHeaders && DisplayBccHeader && Bcc.Count > 0)
             {
                 headerName = MailHeaderInfo.GetString(MailHeaderID.Bcc);
                 Headers.InternalAdd(headerName, Bcc.Encode(headerName.Length, allowUnicode));
@@ -643,6 +646,15 @@ namespace Wildbit.Corefx.Mail
         /// Should we include the Bcc header in the message content?
         /// </summary>
         public bool DisplayBccHeader { get; set; }
+
+        /// <summary>
+        /// Determine whether To, Cc, Bcc headers should be appended/replace 
+        /// those same headers if they have been set manually.
+        /// 
+        /// Defaults to true.
+        /// </summary>
+        /// <remarks>This allows finer-grained control over how headers can be set.</remarks>
+        public bool AutomaticallyBuildAndApplyRecipientHeaders { get; set; } = true;
 
         #endregion Sending
     }
