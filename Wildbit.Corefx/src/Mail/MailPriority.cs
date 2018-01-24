@@ -422,17 +422,20 @@ namespace Wildbit.Corefx.Mail
             string headerName = MailHeaderInfo.GetString(MailHeaderID.XReceiver);
             EnvelopeHeaders.Remove(headerName);
 
-            foreach (MailAddress address in To)
+            if (AutomaticallyBuildAndApplyRecipientHeaders)
             {
-                EnvelopeHeaders.InternalAdd(headerName, address.Encode(headerName.Length, allowUnicode));
-            }
-            foreach (MailAddress address in CC)
-            {
-                EnvelopeHeaders.InternalAdd(headerName, address.Encode(headerName.Length, allowUnicode));
-            }
-            foreach (MailAddress address in Bcc)
-            {
-                EnvelopeHeaders.InternalAdd(headerName, address.Encode(headerName.Length, allowUnicode));
+                foreach (MailAddress address in To)
+                {
+                    EnvelopeHeaders.InternalAdd(headerName, address.Encode(headerName.Length, allowUnicode));
+                }
+                foreach (MailAddress address in CC)
+                {
+                    EnvelopeHeaders.InternalAdd(headerName, address.Encode(headerName.Length, allowUnicode));
+                }
+                foreach (MailAddress address in Bcc)
+                {
+                    EnvelopeHeaders.InternalAdd(headerName, address.Encode(headerName.Length, allowUnicode));
+                } 
             }
         }
 
@@ -508,10 +511,14 @@ namespace Wildbit.Corefx.Mail
                 Headers.Remove(headerName);
             }
 
-            Headers.Remove(MailHeaderInfo.GetString(MailHeaderID.Bcc));
+            if (!DisplayBccHeader)
+            {
+                Headers.Remove(MailHeaderInfo.GetString(MailHeaderID.Bcc));
+            }
 
             if (AutomaticallyBuildAndApplyRecipientHeaders && DisplayBccHeader && Bcc.Count > 0)
             {
+                Headers.Remove(MailHeaderInfo.GetString(MailHeaderID.Bcc));
                 headerName = MailHeaderInfo.GetString(MailHeaderID.Bcc);
                 Headers.InternalAdd(headerName, Bcc.Encode(headerName.Length, allowUnicode));
             }
