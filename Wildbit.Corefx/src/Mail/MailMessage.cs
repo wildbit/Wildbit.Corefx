@@ -175,6 +175,18 @@ namespace Wildbit.Corefx.Mail
             }
         }
 
+        public DateTime? Date
+        {
+            get
+            {
+                return _message.Date;
+            }
+            set
+            {
+                _message.Date = value;
+            }
+        }
+
         public DeliveryNotificationOptions DeliveryNotificationOptions
         {
             get
