@@ -174,7 +174,10 @@ namespace Wildbit.Corefx.Mail
                 _message.Priority = value;
             }
         }
-
+        
+        /// <summary>
+        /// Sets a custom Date header. If not set, DateTime.Now will be used instead.
+        /// </summary>
         public DateTime? Date
         {
             get
