@@ -31,7 +31,6 @@ namespace Wildbit.Corefx.Mail
         private HeaderCollection _headers;
         private HeaderCollection _envelopeHeaders;
         private string _subject;
-        private DateTime? _date;
         private Encoding _subjectEncoding;
         private Encoding _headersEncoding;
         private MailPriority _priority = (MailPriority)(-1);
@@ -87,14 +86,7 @@ namespace Wildbit.Corefx.Mail
             }
         }
 
-        internal DateTime? Date
-        {
-            get { return _date; }
-            set
-            {
-                _date = value;
-            }
-        }
+        internal DateTime Date { get; set; } = DateTime.Now;
 
         internal MailAddress From
         {
@@ -553,9 +545,8 @@ namespace Wildbit.Corefx.Mail
                 Headers.Remove(MailHeaderInfo.GetString(MailHeaderID.Importance));
             }
 
-            var date = _date ?? DateTime.Now;
             Headers.InternalAdd(MailHeaderInfo.GetString(MailHeaderID.Date),
-                MailBnfHelper.GetDateTimeString(date, null));
+                MailBnfHelper.GetDateTimeString(Date, null));
 
             headerName = MailHeaderInfo.GetString(MailHeaderID.Subject);
             if (!string.IsNullOrEmpty(_subject))

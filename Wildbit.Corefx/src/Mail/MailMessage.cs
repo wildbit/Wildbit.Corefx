@@ -176,9 +176,9 @@ namespace Wildbit.Corefx.Mail
         }
         
         /// <summary>
-        /// Sets a custom Date header. If not set, DateTime.Now will be used instead.
+        /// Sets a custom Date header. By default, DateTime.Now will be used.
         /// </summary>
-        public DateTime? Date
+        public DateTime Date
         {
             get
             {
