@@ -86,6 +86,8 @@ namespace Wildbit.Corefx.Mail
             }
         }
 
+        internal DateTime Date { get; set; } = DateTime.Now;
+
         internal MailAddress From
         {
             get
@@ -544,7 +546,7 @@ namespace Wildbit.Corefx.Mail
             }
 
             Headers.InternalAdd(MailHeaderInfo.GetString(MailHeaderID.Date),
-                MailBnfHelper.GetDateTimeString(DateTime.Now, null));
+                MailBnfHelper.GetDateTimeString(Date, null));
 
             headerName = MailHeaderInfo.GetString(MailHeaderID.Subject);
             if (!string.IsNullOrEmpty(_subject))
